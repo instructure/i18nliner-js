@@ -13,7 +13,8 @@
     "i18nliner": "./bin/i18nliner"
   },
   "browserslist": [
-    "extends @instructure/browserslist-config-canvas-lms"
+    "extends @instructure/browserslist-config-canvas-lms",
+    "ie >= 11"
   ],
   "devDependencies": {
     "@babel/core": "^7.5.5",

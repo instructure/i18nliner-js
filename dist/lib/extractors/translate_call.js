@@ -13,6 +13,8 @@ var _utils = _interopRequireDefault(require("../utils"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
 function TranslateCall(line, method, args) {
   this.line = line;
   this.method = method;
@@ -54,7 +56,7 @@ TranslateCall.prototype.validateKey = function () {};
 TranslateCall.prototype.validateDefault = function () {
   var defaultValue = this.defaultValue;
 
-  if (typeof defaultValue === 'object') {
+  if (_typeof(defaultValue) === 'object') {
     var defaultKeys = _utils.default.keys(defaultValue);
 
     var dKeys;
@@ -114,7 +116,7 @@ TranslateCall.prototype.validateInterpolationValues = function (key, defaultValu
 
 TranslateCall.prototype.validateOptions = function () {
   var options = this.options;
-  if (typeof this.defaultValue === 'object' && (!options || !options.count)) throw new _errors.default.MissingCountValue(this.line);
+  if (_typeof(this.defaultValue) === 'object' && (!options || !options.count)) throw new _errors.default.MissingCountValue(this.line);
 
   if (options) {
     for (var k in options) {

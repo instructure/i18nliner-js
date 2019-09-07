@@ -17,6 +17,8 @@ var _crc = _interopRequireDefault(require("crc32"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
 var CallHelpers = {
   ALLOWED_PLURALIZATION_KEYS: ["zero", "one", "few", "many", "other"],
   REQUIRED_PLURALIZATION_KEYS: ["one", "other"],
@@ -39,7 +41,7 @@ var CallHelpers = {
     }
   },
   isObject: function isObject(object) {
-    return typeof object === 'object' && object !== this.UNSUPPORTED_EXPRESSION;
+    return _typeof(object) === 'object' && object !== this.UNSUPPORTED_EXPRESSION;
   },
   validDefault: function validDefault(allowBlank) {
     var defaultValue = this.defaultValue;
@@ -48,7 +50,7 @@ var CallHelpers = {
   inferKey: function inferKey(defaultValue, translateOptions) {
     if (this.validDefault(defaultValue)) {
       defaultValue = this.normalizeDefault(defaultValue, translateOptions);
-      if (typeof defaultValue === 'object') defaultValue = "" + defaultValue.other;
+      if (_typeof(defaultValue) === 'object') defaultValue = "" + defaultValue.other;
       return this.keyify(defaultValue);
     }
   },
@@ -87,7 +89,7 @@ var CallHelpers = {
    * default_object, options
    **/
   isKeyProvided: function isKeyProvided(keyOrDefault, defaultOrOptions, maybeOptions) {
-    if (typeof keyOrDefault === 'object') return false;
+    if (_typeof(keyOrDefault) === 'object') return false;
     if (typeof defaultOrOptions === 'string') return true;
     if (maybeOptions) return true;
     if (typeof keyOrDefault === 'string' && keyOrDefault.match(CallHelpers.keyPattern)) return true;
@@ -98,7 +100,7 @@ var CallHelpers = {
     return this.isObject(object) && (pKeys = _utils.default.keys(object)) && pKeys.length > 0 && _utils.default.difference(pKeys, this.ALLOWED_PLURALIZATION_KEYS).length === 0;
   },
   inferArguments: function inferArguments(args, meta) {
-    if (args.length === 2 && typeof args[1] === 'object' && args[1].defaultValue) return args;
+    if (args.length === 2 && _typeof(args[1]) === 'object' && args[1].defaultValue) return args;
     var hasKey = this.isKeyProvided.apply(this, args);
     if (meta) meta.inferredKey = !hasKey;
     if (!hasKey) args.unshift(null);
@@ -118,14 +120,18 @@ var CallHelpers = {
     if (typeof wrappers === 'string') wrappers = [wrappers];
 
     if (wrappers instanceof Array) {
-      for (i = wrappers.length; i; i--) string = this.applyWrapper(string, new Array(i + 1).join("*"), wrappers[i - 1]);
+      for (i = wrappers.length; i; i--) {
+        string = this.applyWrapper(string, new Array(i + 1).join("*"), wrappers[i - 1]);
+      }
     } else {
       keys = _utils.default.keys(wrappers);
       keys.sort(function (a, b) {
         return b.length - a.length;
       }); // longest first
 
-      for (i = 0, len = keys.length; i < len; i++) string = this.applyWrapper(string, keys[i], wrappers[keys[i]]);
+      for (i = 0, len = keys.length; i < len; i++) {
+        string = this.applyWrapper(string, keys[i], wrappers[keys[i]]);
+      }
     }
 
     return string;

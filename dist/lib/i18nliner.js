@@ -22,7 +22,7 @@ var maybeLoadJSON = function maybeLoadJSON(path) {
 };
 
 var I18nliner = {
-  ignore() {
+  ignore: function ignore() {
     fs = fs || require("fs");
     var ignores = [];
 
@@ -32,8 +32,7 @@ var I18nliner = {
 
     return ignores;
   },
-
-  set(key, value, fn) {
+  set: function set(key, value, fn) {
     var prevValue = this.config[key];
     this.config[key] = value;
 
@@ -45,8 +44,7 @@ var I18nliner = {
       }
     }
   },
-
-  loadConfig() {
+  loadConfig: function loadConfig() {
     var config = maybeLoadJSON(".i18nrc");
 
     for (var key in config) {
@@ -61,8 +59,7 @@ var I18nliner = {
       this.loadPlugins(config.plugins);
     }
   },
-
-  loadPlugins(plugins) {
+  loadPlugins: function loadPlugins(plugins) {
     plugins.forEach(function (pluginName) {
       var plugin = require(pluginName);
 
@@ -73,7 +70,6 @@ var I18nliner = {
       });
     }.bind(this));
   },
-
   config: {
     inferredKeyFormat: 'underscored_crc32',
 
