@@ -1,19 +1,22 @@
 {
-  "name": "i18nliner-handlebars",
+  "name": "@instructure/i18nliner-handlebars",
   "description": "handlebars i18n made simple",
-  "version": "0.2.2",
+  "version": "1.0.0",
   "contributors": [
     {
       "name": "Jon Jensen"
     },
     {
       "name": "Stanley Stuart"
+    },
+    {
+      "name": "Ahmad Amireh"
     }
   ],
-  "homepage": "https://github.com/fivetanley/i18nliner-handlebars",
+  "homepage": "https://github.com/instructure/i18nliner-handlebars",
   "repository": {
     "type": "git",
-    "url": "http://github.com/fivetanley/i18nliner-handlebars.git"
+    "url": "http://github.com/instructure/i18nliner-handlebars.git"
   },
   "main": "./dist/lib/main",
   "devDependencies": {
@@ -36,7 +39,7 @@
     "test": "grunt eslint && grunt test && mocha tmp/test"
   },
   "peerDependencies": {
-    "handlebars": ">=1.3 <3",
+    "handlebars": "~1.3.0",
     "i18nliner": "~0.2.0"
   },
   "dependencies": {
