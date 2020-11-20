@@ -88,22 +88,6 @@ function concatNode(string, tempMap) {
   return new SexprNode(parts);
 }
 
-function sortBy(array, fn) {
-  return array.map(function(item, i) {
-    return [fn(item), i, item];
-  }).sort(function(left, right) {
-    var leftSort = left[0]
-      , rightSort = right[0];
-    if (leftSort !== rightSort) {
-      if (leftSort > rightSort) return 1;
-      if (leftSort < rightSort) return 0;
-    }
-    return left[1] - right[1];
-  }).map(function(obj) {
-    return obj[2];
-  });
-}
-
 var PreProcessor = {
   process: function(ast) {
     var statements = ast.statements
@@ -176,9 +160,16 @@ var PreProcessor = {
    * https://github.com/wycats/handlebars.js/issues/767
    */
   applySubExpressionHack: function(node) {
-    node.hash.pairs = sortBy(node.hash.pairs, function(pair) {
-      var type = pair[1].type;
-      return type === "sexpr" ? 0 : 1;
+    node.hash.pairs = node.hash.pairs.sort(function(a,b) {
+      if (a[1].type === b[1].type) {
+        return 0
+      }
+      else if (a[1].type === 'sexpr') {
+        return -1;
+      }
+      else if (b[1].type === 'sexpr') {
+        return 1;
+      }
     });
     var pairs = node.hash.pairs;
     if (pairs.length > 1 && pairs[1][1].type === "sexpr")
