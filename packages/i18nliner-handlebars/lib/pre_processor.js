@@ -1,7 +1,7 @@
 /* global window */
 
 import Handlebars from "handlebars";
-import {jsdom} from "jsdom";
+import { JSDOM } from "jsdom";
 import CallHelpers from "i18nliner/dist/lib/call_helpers";
 import Errors from "./errors";
 
@@ -9,7 +9,7 @@ var dom = (function(){
   if (typeof window !== 'undefined') {
     return window.document;
   } else {
-    return jsdom().defaultView.document;
+    return (new JSDOM('')).window.document;
   }
 })();
 
