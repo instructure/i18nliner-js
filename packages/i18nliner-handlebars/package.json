@@ -3,21 +3,16 @@
   "description": "handlebars i18n made simple",
   "version": "1.0.0",
   "license": "MIT",
+  "private": false,
   "contributors": [
-    {
-      "name": "Jon Jensen"
-    },
-    {
-      "name": "Stanley Stuart"
-    },
-    {
-      "name": "Ahmad Amireh"
-    }
+    "Jon Jensen",
+    "Stanley Stuart",
+    "Ahmad Amireh"
   ],
   "homepage": "https://github.com/instructure/i18nliner-handlebars",
   "repository": {
     "type": "git",
-    "url": "http://github.com/instructure/i18nliner-handlebars.git"
+    "url": "git+ssh://git@github.com/instructure/i18nliner-handlebars.git"
   },
   "main": "./dist/lib/main",
   "devDependencies": {
@@ -43,5 +38,17 @@
     "i18nliner": "~0.2.0",
     "jsdom": "^14, ^15, ^16"
   },
-  "dependencies": {}
+  "dependencies": {},
+  "bugs": {
+    "url": "https://github.com/instructure/i18nliner-handlebars/issues"
+  },
+  "directories": {
+    "lib": "lib",
+    "test": "test"
+  },
+  "keywords": [
+    "i18nliner",
+    "handlebars",
+    "i18n"
+  ]
 }
