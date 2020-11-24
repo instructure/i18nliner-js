@@ -9,7 +9,7 @@ import PreProcessor from "../lib/pre_processor";
 describe("PreProcessor", function() {
   before(function() {
     var StringNode = Handlebars.AST.StringNode;
-    this.inferKey = sinon.stub(PreProcessor, "inferKey", function() {
+    this.inferKey = sinon.stub(PreProcessor, "inferKey").callsFake(function() {
       return new StringNode("key");
     });
   });

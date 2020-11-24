@@ -3,9 +3,9 @@
     "browser": true,
     "node": true
   },
-  parserOptions: {
-    ecmaVersion: 6,
-    sourceType: "module",
+  "parserOptions": {
+    "ecmaVersion": 6,
+    "sourceType": "module",
   },
   "rules": {
     "indent": ["error", 2, { "SwitchCase": 1 }],
