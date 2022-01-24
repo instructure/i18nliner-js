@@ -13,6 +13,8 @@ var _generic_command = _interopRequireDefault(require("./generic_command"));
 
 var _js_processor = _interopRequireDefault(require("../processors/js_processor"));
 
+var _ts_processor = _interopRequireDefault(require("../processors/ts_processor"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var red = _cliColor.default.red;
@@ -102,7 +104,8 @@ Check.prototype.run = function () {
 };
 
 Check.processors = {
-  JsProcessor: _js_processor.default
+  JsProcessor: _js_processor.default,
+  TsProcessor: _ts_processor.default
 };
 var _default = Check;
 exports.default = _default;
