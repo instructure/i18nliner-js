@@ -19,7 +19,7 @@ function capitalize(string) {
 }
 
 var Commands = {
-  run: function run(name, options) {
+  run: function (name, options) {
     options = options || {};
     var Command = this[capitalize(name)];
 

@@ -16,7 +16,7 @@ function wordify(string) {
 }
 
 var Errors = {
-  register: function register(name) {
+  register: function (name) {
     this[name] = function (line, details) {
       this.line = line;
 

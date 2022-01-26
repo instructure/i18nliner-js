@@ -11,7 +11,7 @@ var _utils = _interopRequireDefault(require("../utils"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var extend = function extend(I18n) {
+var extend = function (I18n) {
   var htmlEscape = _utils.default.htmlEscape;
   I18n.interpolateWithoutHtmlSafety = I18n.interpolate;
 

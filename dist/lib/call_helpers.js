@@ -21,14 +21,14 @@ var CallHelpers = {
   ALLOWED_PLURALIZATION_KEYS: ["zero", "one", "few", "many", "other"],
   REQUIRED_PLURALIZATION_KEYS: ["one", "other"],
   UNSUPPORTED_EXPRESSION: [],
-  normalizeKey: function normalizeKey(key) {
+  normalizeKey: function (key) {
     return key;
   },
-  normalizeDefault: function normalizeDefault(defaultValue, translateOptions) {
+  normalizeDefault: function (defaultValue, translateOptions) {
     defaultValue = CallHelpers.inferPluralizationHash(defaultValue, translateOptions);
     return defaultValue;
   },
-  inferPluralizationHash: function inferPluralizationHash(defaultValue, translateOptions) {
+  inferPluralizationHash: function (defaultValue, translateOptions) {
     if (typeof defaultValue === 'string' && defaultValue.match(/^[\w-]+$/) && translateOptions && "count" in translateOptions) {
       return {
         one: "1 " + defaultValue,
@@ -38,32 +38,32 @@ var CallHelpers = {
       return defaultValue;
     }
   },
-  isObject: function isObject(object) {
+  isObject: function (object) {
     return typeof object === 'object' && object !== this.UNSUPPORTED_EXPRESSION;
   },
-  validDefault: function validDefault(allowBlank) {
+  validDefault: function (allowBlank) {
     var defaultValue = this.defaultValue;
     return allowBlank && (typeof defaultValue === 'undefined' || defaultValue === null) || typeof defaultValue === 'string' || this.isObject(defaultValue);
   },
-  inferKey: function inferKey(defaultValue, translateOptions) {
+  inferKey: function (defaultValue, translateOptions) {
     if (this.validDefault(defaultValue)) {
       defaultValue = this.normalizeDefault(defaultValue, translateOptions);
       if (typeof defaultValue === 'object') defaultValue = "" + defaultValue.other;
       return this.keyify(defaultValue);
     }
   },
-  keyifyUnderscored: function keyifyUnderscored(string) {
+  keyifyUnderscored: function (string) {
     var key = (0, _speakingurl.default)(string, {
       separator: '_',
       lang: false
     }).replace(/[-_]+/g, '_');
     return key.substring(0, _i18nliner.default.config.underscoredKeyLength);
   },
-  keyifyUnderscoredCrc32: function keyifyUnderscoredCrc32(string) {
+  keyifyUnderscoredCrc32: function (string) {
     var checksum = (0, _crc.default)(string.length + ":" + string).toString(16);
     return this.keyifyUnderscored(string) + "_" + checksum;
   },
-  keyify: function keyify(string) {
+  keyify: function (string) {
     switch (_i18nliner.default.config.inferredKeyFormat) {
       case 'underscored':
         return this.keyifyUnderscored(string);
@@ -86,18 +86,18 @@ var CallHelpers = {
    * default_string [, options]
    * default_object, options
    **/
-  isKeyProvided: function isKeyProvided(keyOrDefault, defaultOrOptions, maybeOptions) {
+  isKeyProvided: function (keyOrDefault, defaultOrOptions, maybeOptions) {
     if (typeof keyOrDefault === 'object') return false;
     if (typeof defaultOrOptions === 'string') return true;
     if (maybeOptions) return true;
     if (typeof keyOrDefault === 'string' && keyOrDefault.match(CallHelpers.keyPattern)) return true;
     return false;
   },
-  isPluralizationHash: function isPluralizationHash(object) {
+  isPluralizationHash: function (object) {
     var pKeys;
     return this.isObject(object) && (pKeys = _utils.default.keys(object)) && pKeys.length > 0 && _utils.default.difference(pKeys, this.ALLOWED_PLURALIZATION_KEYS).length === 0;
   },
-  inferArguments: function inferArguments(args, meta) {
+  inferArguments: function (args, meta) {
     if (args.length === 2 && typeof args[1] === 'object' && args[1].defaultValue) return args;
     var hasKey = this.isKeyProvided.apply(this, args);
     if (meta) meta.inferredKey = !hasKey;
@@ -111,7 +111,7 @@ var CallHelpers = {
     if (!hasKey) args[0] = this.inferKey(defaultValue, options);
     return args;
   },
-  applyWrappers: function applyWrappers(string, wrappers) {
+  applyWrappers: function (string, wrappers) {
     var i;
     var len;
     var keys;
@@ -130,7 +130,7 @@ var CallHelpers = {
 
     return string;
   },
-  applyWrapper: function applyWrapper(string, delimiter, wrapper) {
+  applyWrapper: function (string, delimiter, wrapper) {
     var escapedDelimiter = _utils.default.regexpEscape(delimiter);
 
     var pattern = new RegExp(escapedDelimiter + "(.*?)" + escapedDelimiter, "g");

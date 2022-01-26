@@ -22,7 +22,7 @@ HtmlSafeString.prototype.toString = function () {
 
 var Utils = {
   HtmlSafeString: HtmlSafeString,
-  difference: function difference(a1, a2) {
+  difference: function (a1, a2) {
     var result = [];
 
     for (var i = 0, len = a1.length; i < len; i++) {
@@ -31,7 +31,7 @@ var Utils = {
 
     return result;
   },
-  keys: function keys(object) {
+  keys: function (object) {
     var keys = [];
 
     for (var key in object) {
@@ -40,18 +40,18 @@ var Utils = {
 
     return keys;
   },
-  htmlEscape: function htmlEscape(string) {
+  htmlEscape: function (string) {
     if (typeof string === 'undefined' || string === null) return '';
     if (string instanceof Utils.HtmlSafeString) return string.toString();
     return String(string).replace(/[&<>"']/g, function (m) {
       return htmlEntities[m];
     });
   },
-  regexpEscape: function regexpEscape(string) {
+  regexpEscape: function (string) {
     if (typeof string === 'undefined' || string === null) return '';
     return String(string).replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
   },
-  extend: function extend() {
+  extend: function () {
     var args = [].slice.call(arguments);
     var target = args.shift();
 

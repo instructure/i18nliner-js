@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", {
 exports.default = void 0;
 var fs;
 
-var maybeLoadJSON = function maybeLoadJSON(path) {
+var maybeLoadJSON = function (path) {
   fs = fs || require("fs");
   var data = {};
 
