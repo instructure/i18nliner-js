@@ -1,3 +1,9 @@
+## 2.0.0
+
+- Added support for TypeScript
+- (BREAKING) `dist/` is no longer tracked in SCM but is still available in the
+  NPM package
+
 ## 1.0.0
 
 This is primarily a re-release of old code.
