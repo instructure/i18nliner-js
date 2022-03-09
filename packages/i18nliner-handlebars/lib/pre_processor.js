@@ -2,7 +2,7 @@
 
 import Handlebars from "handlebars";
 import { JSDOM } from "jsdom";
-import CallHelpers from "i18nliner/dist/lib/call_helpers";
+import CallHelpers from "@instructure/i18nliner/dist/lib/call_helpers";
 import Errors from "./errors";
 
 var dom = (function(){

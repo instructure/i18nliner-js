@@ -1,4 +1,4 @@
-import Errors from "i18nliner/dist/lib/errors";
+import Errors from "@instructure/i18nliner/dist/lib/errors";
 
 Errors.register('TBlockNestingError');
 Errors.register('UnwrappableContentError');
