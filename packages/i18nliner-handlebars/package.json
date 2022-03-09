@@ -1,7 +1,7 @@
 {
   "name": "@instructure/i18nliner-handlebars",
   "description": "handlebars i18n made simple",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "license": "MIT",
   "private": false,
   "contributors": [
@@ -31,7 +31,8 @@
     "build": "babel -d dist/lib lib",
     "clean": "rm -rf dist tmp/test",
     "lint": "eslint lib test",
-    "test": "babel -d tmp/test test && babel -d tmp/lib lib && mocha tmp/test"
+    "test": "babel -d tmp/test test && babel -d tmp/lib lib && mocha tmp/test",
+    "prepublishOnly": "npm run clean && npm run build && npm run lint && npm run test"
   },
   "peerDependencies": {
     "handlebars": "~1.3.0",
