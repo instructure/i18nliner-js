@@ -1,6 +1,6 @@
 import fs from "fs";
 import Handlebars from "handlebars";
-import AbstractProcessor from "i18nliner/dist/lib/processors/abstract_processor";
+import AbstractProcessor from "@instructure/i18nliner/dist/lib/processors/abstract_processor";
 
 import PreProcessor from "./pre_processor";
 import Extractor from "./extractor";

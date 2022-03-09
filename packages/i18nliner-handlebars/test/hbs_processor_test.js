@@ -1,7 +1,7 @@
 /* global describe, it */
 
 import {assert} from "chai";
-import I18nliner from "i18nliner";
+import I18nliner from "@instructure/i18nliner";
 import HbsProcessor from "../lib/hbs_processor";
 
 var TranslationHash = I18nliner.TranslationHash;

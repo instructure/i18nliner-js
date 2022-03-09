@@ -4,7 +4,7 @@ import {assert} from "chai";
 import Handlebars from "handlebars";
 import Extractor from "../lib/extractor";
 import PreProcessor from "../lib/pre_processor";
-import I18nliner from "i18nliner";
+import I18nliner from "@instructure/i18nliner";
 
 var Errors = I18nliner.Errors;
 var TranslationHash = I18nliner.TranslationHash;

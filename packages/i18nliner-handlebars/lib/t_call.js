@@ -1,4 +1,4 @@
-import TranslateCall from "i18nliner/dist/lib/extractors/translate_call";
+import TranslateCall from "@instructure/i18nliner/dist/lib/extractors/translate_call";
 
 /*
  * hbs-capable version of TranslateCall
