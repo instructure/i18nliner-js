@@ -1,7 +1,7 @@
 {
   "name": "@instructure/i18nliner",
   "description": "i18n made simple",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "license": "MIT",
   "homepage": "https://github.com/instructure/i18nliner-js",
   "main": "./dist/lib/main.js",

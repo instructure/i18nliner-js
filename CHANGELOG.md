@@ -1,3 +1,9 @@
+## 2.1.0
+
+- `I18nJsExtractor#buildTranslateCall` now receives the Path as an additional
+  argument, allowing access to the scope and bindings for resolving the I18n
+  receiver in lexical scope.
+
 ## 2.0.0
 
 - Added support for TypeScript

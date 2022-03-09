@@ -79,4 +79,30 @@ describe("I18nJsExtractor", function() {
       }, Errors.MissingCountValue);
     });
   });
+
+  describe("custom translator implementations", () => {
+    it("exposes the path to buildTranslateCall", () => {
+      const calls = []
+
+      class CustomI18nJsExtractor extends I18nJsExtractor {
+        buildTranslateCall(line, method, args, path) {
+          const retValue = I18nJsExtractor.prototype.buildTranslateCall.apply(this, arguments)
+          calls.push([line, method, args, path])
+          return retValue
+        }
+      }
+
+      const extractor = new CustomI18nJsExtractor({
+        ast: JsProcessor.prototype.parse(`
+          I18n.t('hello')
+        `)
+      });
+
+      extractor.run();
+
+      assert.deepEqual(calls.length, 1)
+      assert.ok(calls[0][3])
+      assert.include(calls[0][3], { type: 'CallExpression' })
+    })
+  })
 });
