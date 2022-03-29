@@ -30,7 +30,7 @@ describe("I18nJs extension", function() {
   extend(I18n);
 
   describe("translate", function() {
-    it("should should normalize the arguments passed into the original translate", function() {
+    it("should normalize the arguments passed into the original translate", function() {
       var spy = sinon.spy(I18n, "translateWithoutI18nliner");
       assert.equal(
         I18n.translate("Hello %{name}", {name: "bob"}),

@@ -6,7 +6,8 @@ import I18nliner from "../../lib/i18nliner";
 
 describe("TranslateCall", function() {
   function call() {
-    return new TranslateCall(null, 't', [].slice.call(arguments));
+    const argsWithNodes = [].slice.call(arguments).map(arg => [arg, null])
+    return new TranslateCall(null, 't', argsWithNodes);
   }
 
   describe("signature", function() {
