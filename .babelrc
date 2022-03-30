@@ -5,6 +5,6 @@
     }]
   ],
   "targets": {
-    "node": "current"
+    "node": "14"
   }
 }
