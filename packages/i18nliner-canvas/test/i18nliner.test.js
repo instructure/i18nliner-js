@@ -16,12 +16,14 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-const path = require("path");
 const mkdirp = require("mkdirp");
-const { I18nliner } = require("../lib/main");
+const path = require("path");
 const scanner = require("../lib/scanner");
+const {loadConfig} = require('@instructure/i18nliner')
+const { Commands } = require("../lib/main");
+const { assert } = require('chai');
 
-class PanickyCheck extends I18nliner.Commands.Check {
+class PanickyCheck extends Commands.Check {
   // don't print to TTY
   print() {};
 
@@ -46,13 +48,17 @@ var subject = function(dir) {
 }
 
 describe("i18nliner-canvas", function() {
+  beforeEach(() => {
+    loadConfig()
+  })
+
   afterEach(function() {
     scanner.reset()
   })
 
   describe("handlebars", function() {
     it("extracts default translations", function() {
-      expect(subject(expand("./fixtures/hbs"))).toEqual({
+      assert.deepEqual(subject(expand("./fixtures/hbs")), {
         absolute_key: "Absolute key",
         inferred_key_c49e3743: "Inferred key",
         inline_with_absolute_key: "Inline with absolute key",
@@ -78,15 +84,15 @@ describe("i18nliner-canvas", function() {
         )
       )
 
-      expect(() => {
+      assert.throws(() => {
         command.checkFiles()
-      }).toThrowError(/expected i18nScope for Handlebars template to be specified/)
+      }, /expected i18nScope for Handlebars template to be specified/)
     })
   });
 
   describe("javascript", function() {
     it("extracts default translations", function() {
-      expect(subject(expand("./fixtures/js"))).toEqual({
+      assert.deepEqual(subject(expand("./fixtures/js")), {
         absolute_key: "Absolute key",
         inferred_key_c49e3743: "Inferred key",
         esm: {

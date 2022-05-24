@@ -1,27 +1,10 @@
-/*
- * Copyright (C) 2014 - present Instructure, Inc.
- *
- * This file is part of Canvas.
- *
- * Canvas is free software: you can redistribute it and/or modify it under
- * the terms of the GNU Affero General Public License as published by the Free
- * Software Foundation, version 3 of the License.
- *
- * Canvas is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
- * details.
- *
- * You should have received a copy of the GNU Affero General Public License along
- * with this program. If not, see <http://www.gnu.org/licenses/>.
- */
-
-var HbsExtractor = require("@instructure/i18nliner-handlebars/dist/lib/extractor").default;
-
-var HbsTranslateCall = require("@instructure/i18nliner-handlebars/dist/lib/t_call").default;
-var ScopedHbsTranslateCall = require("./scoped_translate_call")(HbsTranslateCall);
-var path = require('path')
-var fs = require('fs')
+const {
+  HbsExtractor,
+  HbsTranslateCall
+} = require('@instructure/i18nliner-handlebars')
+const ScopedHbsTranslateCall = require("./scoped_translate_call")(HbsTranslateCall);
+const path = require('path')
+const fs = require('fs')
 
 function ScopedHbsExtractor(ast, options) {
   // read the scope from the i18nScope property in the accompanying .json file:

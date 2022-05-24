@@ -16,7 +16,7 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-const { default: Errors } = require("@instructure/i18nliner/dist/lib/errors");
+const { Errors } = require("@instructure/i18nliner");
 
 Errors.register("UnscopedTranslateCall");
 

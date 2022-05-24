@@ -52,4 +52,4 @@ var Visitor = {
   }
 };
 
-export default Visitor;
+module.exports = Visitor;

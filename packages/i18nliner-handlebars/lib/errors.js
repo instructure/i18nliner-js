@@ -1,7 +1,7 @@
-import Errors from "@instructure/i18nliner/dist/lib/errors";
+const { Errors } = require("@instructure/i18nliner");
 
 Errors.register('TBlockNestingError');
 Errors.register('UnwrappableContentError');
 Errors.register('MultipleSubExpressionsError');
 
-export default Errors;
+module.exports = Errors;

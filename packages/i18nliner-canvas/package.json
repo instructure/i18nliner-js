@@ -1,5 +1,5 @@
 {
-  "name": "i18nliner-canvas",
+  "name": "@instructure/i18nliner-canvas",
   "description": "i18nliner, canvas style",
   "private": true,
   "main": "./lib/main",
@@ -15,10 +15,9 @@
   },
   "devDependencies": {
     "coffee-script": "^1.12.4",
-    "dedent": "^0.7.0",
-    "jest": "^26"
+    "dedent": "^0.7.0"
   },
   "scripts": {
-    "test": "jest"
+    "test": "mocha"
   }
 }

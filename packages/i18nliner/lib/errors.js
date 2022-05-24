@@ -1,4 +1,4 @@
-import CallHelpers from "./call_helpers";
+const CallHelpers = require("./call_helpers");
 
 function wordify(string) {
   return string.replace(/[A-Z]/g, function(s) {
@@ -6,27 +6,38 @@ function wordify(string) {
   }).trim();
 }
 
+function parseDetails(details) {
+  var parts = [];
+  var part;
+  if (typeof details === "string" || !details.length) details = [details];
+  for (var i = 0; i < details.length; i++) {
+    part = details[i];
+    part = part === CallHelpers.UNSUPPORTED_EXPRESSION ?
+      "<unsupported expression>" :
+      JSON.stringify(part);
+    parts.push(part);
+  }
+
+  return parts.join(', ');
+}
+
 var Errors = {
   register: function(name) {
-    this[name] = function(line, details) {
-      this.line = line;
-      if (details) {
-        var parts = [];
-        var part;
-        if (typeof details === "string" || !details.length) details = [details];
-        for (var i = 0; i < details.length; i++) {
-          part = details[i];
-          part = part === CallHelpers.UNSUPPORTED_EXPRESSION ?
-            "<unsupported expression>" :
-            JSON.stringify(part);
-          parts.push(part);
+    const klass = class extends Error {
+      constructor(line, details) {
+        if (details) {
+          super(wordify(name) + ": " + parseDetails(details))
         }
-        details = parts.join(', ');
+        else {
+          super(wordify(name))
+        }
+
+        this.name = name;
+        this.line = line;
       }
-      this.name = name;
-      this.message = wordify(name) + (details ? ": " + details : "");
-      this.line = line;
     };
+    klass.name = name;
+    this[name] = klass;
   }
 };
 
@@ -40,4 +51,4 @@ Errors.register('InvalidOptionKey');
 Errors.register('KeyAsScope');
 Errors.register('KeyInUse');
 
-export default Errors;
+module.exports = Errors;

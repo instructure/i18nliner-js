@@ -1,7 +1,7 @@
 /* global describe, it */
-import {assert} from "chai";
-import TranslationHash from '../../lib/extractors/translation_hash';
-import Errors from '../../lib/errors';
+const {assert} = require("chai");
+const TranslationHash = require('../../lib/extractors/translation_hash');
+const Errors = require('../../lib/errors');
 
 describe("TranslationHash", function() {
   describe(".set", function() {

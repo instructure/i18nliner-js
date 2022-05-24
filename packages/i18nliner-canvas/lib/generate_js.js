@@ -16,9 +16,7 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-var I18nliner = require("@instructure/i18nliner/dist/lib/main").default;
-var TranslateCall = require("@instructure/i18nliner/dist/lib/extractors/translate_call").default;
-var Commands = I18nliner.Commands;
+var { Commands, TranslateCall } = require("@instructure/i18nliner");
 var Check = Commands.Check;
 var mkdirp = require("mkdirp");
 var fs = require("fs");

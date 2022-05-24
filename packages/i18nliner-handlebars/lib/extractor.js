@@ -1,5 +1,5 @@
-import TCall from "./t_call";
-import Visitor from "./visitor";
+const TCall = require("./t_call");
+const Visitor = require("./visitor");
 
 function Extractor(ast, options){
   options = options || {};
@@ -37,4 +37,4 @@ Extractor.prototype.processTranslateCall = function(sexpr) {
   }
 };
 
-export default Extractor;
+module.exports = Extractor;

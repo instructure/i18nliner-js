@@ -18,8 +18,7 @@
 
 const createScopedTranslateCall = require("./scoped_translate_call")
 const Errors = require("./errors");
-const { default: I18nJsExtractor } = require("@instructure/i18nliner/dist/lib/extractors/i18n_js_extractor");
-const { default: TranslateCall } = require("@instructure/i18nliner/dist/lib/extractors/translate_call");
+const { I18nJsExtractor, TranslateCall } = require("@instructure/i18nliner");
 
 const ScopedTranslateCall = createScopedTranslateCall(TranslateCall);
 const CANVAS_I18N_PACKAGE = '@canvas/i18n'

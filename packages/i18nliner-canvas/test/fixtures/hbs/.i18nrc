@@ -1,4 +1,5 @@
 {
+  "plugins": ["@instructure/i18nliner-handlebars"],
   "files": [
     {
       "pattern": "**/*.hbs",

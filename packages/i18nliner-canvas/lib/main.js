@@ -16,26 +16,26 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-var I18nliner = require("@instructure/i18nliner/dist/lib/main").default;
-var Commands = I18nliner.Commands;
-var Check = Commands.Check;
+const CoffeeScript = require("coffee-script");
+const babylon = require("@babel/parser");
+const fs = require('fs');
+const scanner = require("./scanner");
+const { HbsProcessor } = require("@instructure/i18nliner-handlebars");
+const {
+  AbstractProcessor,
+  CallHelpers,
+  Commands,
+  config,
+  JsProcessor,
+} = require("@instructure/i18nliner");
 
-var CoffeeScript = require("coffee-script");
-var babylon = require("@babel/parser");
-var fs = require('fs');
-
-var AbstractProcessor = require("@instructure/i18nliner/dist/lib/processors/abstract_processor").default;
-var JsProcessor = require("@instructure/i18nliner/dist/lib/processors/js_processor").default;
-var HbsProcessor = require("@instructure/i18nliner-handlebars/dist/lib/hbs_processor").default;
-var CallHelpers = require("@instructure/i18nliner/dist/lib/call_helpers").default;
-
-var scanner = require("./scanner");
+const Check = Commands.Check;
 
 // tell i18nliner's babylon how to handle `import('../foo').then`
-I18nliner.config.babylonPlugins.push('dynamicImport')
-I18nliner.config.babylonPlugins.push('optionalChaining')
+config.babylonPlugins.push('dynamicImport')
+config.babylonPlugins.push('optionalChaining')
 // tell i18nliner's babylon how to handle typescript
-I18nliner.config.babylonPlugins.push('typescript')
+config.babylonPlugins.push('typescript')
 
 AbstractProcessor.prototype.checkFiles = function() {
   const processor = this.constructor.name.replace(/Processor/, '').toLowerCase()
@@ -54,7 +54,7 @@ JsProcessor.prototype.sourceFor = function(file) {
     if (file.match(/\.coffee$/)) {
       data.source = CoffeeScript.compile(source, {});
     }
-    data.ast = babylon.parse(data.source, { plugins: I18nliner.config.babylonPlugins, sourceType: "module" });
+    data.ast = babylon.parse(data.source, { plugins: config.babylonPlugins, sourceType: "module" });
   }
   return data;
 };
@@ -93,7 +93,6 @@ HbsProcessor.prototype.Extractor = ScopedHbsExtractor;
 CallHelpers.keyPattern = /^\#?\w+(\.\w+)+$/ // handle our absolute keys
 
 module.exports = {
-  I18nliner,
   Commands,
   scanner
 };

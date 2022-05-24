@@ -1,8 +1,8 @@
 /* global describe, it */
 
-import {assert} from "chai";
-import I18nliner from "@instructure/i18nliner";
-import HbsProcessor from "../lib/hbs_processor";
+const {assert} = require("chai");
+const I18nliner = require("@instructure/i18nliner");
+const HbsProcessor = require("../lib/hbs_processor");
 
 var TranslationHash = I18nliner.TranslationHash;
 

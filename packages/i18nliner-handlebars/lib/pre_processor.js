@@ -1,9 +1,9 @@
 /* global window */
 
-import Handlebars from "handlebars";
-import { JSDOM } from "jsdom";
-import CallHelpers from "@instructure/i18nliner/dist/lib/call_helpers";
-import Errors from "./errors";
+const Handlebars = require("handlebars");
+const { JSDOM } = require("jsdom");
+const { CallHelpers } = require("@instructure/i18nliner");
+const Errors = require("./errors");
 
 var dom = (function(){
   if (typeof window !== 'undefined') {
@@ -345,4 +345,4 @@ var PreProcessor = {
   }
 };
 
-export default PreProcessor;
+module.exports = PreProcessor;

@@ -4,9 +4,11 @@
   "version": "3.0.0",
   "license": "MIT",
   "homepage": "https://github.com/instructure/i18nliner-js",
-  "main": "./dist/lib/main.js",
   "bin": {
     "i18nliner": "./bin/i18nliner"
+  },
+  "exports": {
+    ".": "./lib/index.js"
   },
   "files": [
     "bin",
@@ -35,10 +37,6 @@
     "speakingurl": "13.0.0"
   },
   "devDependencies": {
-    "@babel/cli": "^7",
-    "@babel/core": "^7",
-    "@babel/preset-env": "^7",
-    "@babel/register": "^7",
     "chai": "~3.5.0",
     "eslint": "^7",
     "mocha": "~3.2.0",
@@ -50,9 +48,8 @@
     "access": "public"
   },
   "scripts": {
-    "prepublishOnly": "yarn lint && yarn test && yarn build",
-    "build": "rm -rf ./dist; babel -d dist/lib lib",
+    "prepublishOnly": "npm run lint && npm run test",
     "lint": "eslint 'lib/**/*.js' 'test/**/*_test.js'",
-    "test": "mocha -r @babel/register 'test/**/*_test.js'"
+    "test": "mocha 'test/**/*_test.js'"
   }
 }

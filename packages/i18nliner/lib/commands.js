@@ -1,7 +1,7 @@
 /* global process */
 
-import Check from "./commands/check";
-import Export from "./commands/export";
+const Check = require("./commands/check");
+const Export = require("./commands/export");
 
 var error = process.stderr.write.bind(process.stderr);
 
@@ -31,4 +31,4 @@ var Commands = {
   Export: Export
 };
 
-export default Commands;
+module.exports = Commands;
