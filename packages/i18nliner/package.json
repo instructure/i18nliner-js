@@ -1,0 +1,58 @@
+{
+  "name": "@instructure/i18nliner",
+  "description": "i18n made simple",
+  "version": "3.0.0",
+  "license": "MIT",
+  "homepage": "https://github.com/instructure/i18nliner-js",
+  "main": "./dist/lib/main.js",
+  "bin": {
+    "i18nliner": "./bin/i18nliner"
+  },
+  "files": [
+    "bin",
+    "dist",
+    "lib",
+    "CHANGELOG.md",
+    "LICENSE",
+    "README.md"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/instructure/i18nliner-js.git"
+  },
+  "authors": [
+    "Jon Jensen",
+    "Ahmad Amireh <ahmad@instructure.com>"
+  ],
+  "dependencies": {
+    "@babel/parser": "^7",
+    "@babel/traverse": "^7",
+    "cli-color": "^1",
+    "crc32": "~0.2.2",
+    "gglobby": "0.0.3",
+    "minimist": "~1.2.0",
+    "mkdirp": "~0.5.1",
+    "speakingurl": "13.0.0"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7",
+    "@babel/core": "^7",
+    "@babel/preset-env": "^7",
+    "@babel/register": "^7",
+    "chai": "~3.5.0",
+    "eslint": "^7",
+    "mocha": "~3.2.0",
+    "rimraf": "~2.6.1",
+    "sinon": "~1.17.7",
+    "temp": "~0.8.3"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "prepublishOnly": "yarn lint && yarn test && yarn build",
+    "build": "rm -rf ./dist; babel -d dist/lib lib",
+    "lint": "eslint 'lib/**/*.js' 'test/**/*_test.js'",
+    "test": "mocha -r @babel/register 'test/**/*_test.js'"
+  }
+}
