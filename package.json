@@ -4,6 +4,7 @@
   "private": true,
   "workspaces": [
     "packages/i18nliner",
+    "packages/i18nliner-canvas",
     "packages/i18nliner-handlebars"
   ],
   "repository": {

@@ -2,11 +2,11 @@
   "name": "i18nliner-canvas",
   "description": "i18nliner, canvas style",
   "private": true,
-  "main": "./js/main",
+  "main": "./lib/main",
   "version": "0.0.1",
   "dependencies": {
-    "@instructure/i18nliner-handlebars": "^1.0.3",
     "@instructure/i18nliner": "^2.1.0",
+    "@instructure/i18nliner-handlebars": "^1.0.3",
     "ember-template-compiler": "1.8.0",
     "glob": "^7.0.3",
     "handlebars": "1.3.0",
@@ -15,9 +15,9 @@
   },
   "devDependencies": {
     "coffee-script": "^1.12.4",
+    "dedent": "^0.7.0",
     "jest": "^26"
   },
-  "peerDependencies": {},
   "scripts": {
     "test": "jest"
   }

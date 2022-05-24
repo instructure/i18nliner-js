@@ -94,15 +94,6 @@ CallHelpers.keyPattern = /^\#?\w+(\.\w+)+$/ // handle our absolute keys
 
 module.exports = {
   I18nliner,
-  runCommand: function(argv) {
-    argv = require('minimist')(argv);
-
-    scanner.scanFilesFromI18nrc(
-      scanner.loadConfigFromDirectory(
-        require('path').resolve(__dirname, '../../..')
-      )
-    )
-
-    Commands.run(argv._[0], argv) || (process.exitCode = 1);
-  }
+  Commands,
+  scanner
 };

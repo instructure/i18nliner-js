@@ -16,9 +16,10 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+const path = require("path");
 const mkdirp = require("mkdirp");
-const { I18nliner } = require("../js/main");
-const scanner = require("../js/scanner");
+const { I18nliner } = require("../lib/main");
+const scanner = require("../lib/scanner");
 
 class PanickyCheck extends I18nliner.Commands.Check {
   // don't print to TTY
@@ -35,6 +36,8 @@ class PanickyCheck extends I18nliner.Commands.Check {
   };
 };
 
+const expand = dir => path.resolve(__dirname, dir)
+
 var subject = function(dir) {
   var command = new PanickyCheck({});
   scanner.scanFilesFromI18nrc(scanner.loadConfigFromDirectory(dir))
@@ -42,14 +45,14 @@ var subject = function(dir) {
   return command.translations.masterHash.translations;
 }
 
-describe("I18nliner", function() {
+describe("i18nliner-canvas", function() {
   afterEach(function() {
     scanner.reset()
   })
 
   describe("handlebars", function() {
     it("extracts default translations", function() {
-      expect(subject("spec/fixtures/hbs")).toEqual({
+      expect(subject(expand("./fixtures/hbs"))).toEqual({
         absolute_key: "Absolute key",
         inferred_key_c49e3743: "Inferred key",
         inline_with_absolute_key: "Inline with absolute key",
@@ -70,7 +73,9 @@ describe("I18nliner", function() {
       const command = new PanickyCheck({});
 
       scanner.scanFilesFromI18nrc(
-        scanner.loadConfigFromDirectory('spec/fixtures/hbs-missing-i18n-scope')
+        scanner.loadConfigFromDirectory(
+          expand('./fixtures/hbs-missing-i18n-scope')
+        )
       )
 
       expect(() => {
@@ -81,7 +86,7 @@ describe("I18nliner", function() {
 
   describe("javascript", function() {
     it("extracts default translations", function() {
-      expect(subject("spec/fixtures/js")).toEqual({
+      expect(subject(expand("./fixtures/js"))).toEqual({
         absolute_key: "Absolute key",
         inferred_key_c49e3743: "Inferred key",
         esm: {
