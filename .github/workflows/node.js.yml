@@ -28,5 +28,5 @@ jobs:
         cache: 'npm'
     - run: npm ci
     - run: npm run test --workspaces
-    - run: npm run lint --workspaces --ignore-missing
-    - run: npm run build --workspaces --ignore-missing
+    - run: npm run lint --workspaces --if-present
+    - run: npm run build --workspaces --if-present
