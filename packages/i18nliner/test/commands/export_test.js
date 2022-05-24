@@ -1,17 +1,17 @@
 /* global describe, it */
 
-import Export from '../../lib/commands/export';
-import I18nliner from '../../lib/i18nliner';
-import {assert} from "chai";
-import fs from "fs";
-import temp from "temp";
-import rimraf from "rimraf";
+const Export = require('../../lib/commands/export');
+const {set} = require('../../lib/config');
+const {assert} = require("chai");
+const fs = require("fs");
+const temp = require("temp");
+const rimraf = require("rimraf");
 
 describe('Export', function() {
   describe(".run", function() {
     it("should dump translations in utf8", function() {
       var tmpDir = temp.mkdirSync();
-      I18nliner.set('basePath', tmpDir, function() {
+      set('basePath', tmpDir, function() {
         var exporter = new Export({silent: true});
         exporter.checkFiles = function() {
           this.translations = {translations: {i18n: "Iñtërnâtiônàlizætiøn"}};

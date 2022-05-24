@@ -1,13 +1,13 @@
 /* global describe, it */
 
-import Check from '../../lib/commands/check';
-import I18nliner from '../../lib/i18nliner';
-import {assert} from "chai";
+const Check = require('../../lib/commands/check');
+const {set} = require('../../lib/config');
+const {assert} = require("chai");
 
 describe('Check', function() {
   describe(".run", function() {
     it("should find errors in js files", function() {
-      I18nliner.set('basePath', "test/fixtures/i18n_js", function() {
+      set('basePath', "test/fixtures/i18n_js", function() {
         var checker = new Check({silent: true});
         checker.run();
         assert.deepEqual(
@@ -20,7 +20,7 @@ describe('Check', function() {
     });
 
     it("should find errors in ts files", function() {
-      I18nliner.set('basePath', "test/fixtures/i18n_ts", function() {
+      set('basePath', "test/fixtures/i18n_ts", function() {
         var checker = new Check({silent: true});
         checker.run();
         assert.deepEqual(

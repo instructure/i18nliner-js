@@ -11,4 +11,4 @@ GenericCommand.prototype.print = function(string) {
   process.stdout.write(string);
 };
 
-export default GenericCommand;
+module.exports = GenericCommand;

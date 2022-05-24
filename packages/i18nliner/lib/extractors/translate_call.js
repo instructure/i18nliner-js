@@ -1,6 +1,6 @@
-import CallHelpers from '../call_helpers';
-import Errors from "../errors";
-import Utils from "../utils";
+const CallHelpers = require('../call_helpers');
+const Errors = require("../errors");
+const Utils = require("../utils");
 
 function TranslateCall(line, method, args) {
   this.line = line;
@@ -123,4 +123,4 @@ TranslateCall.prototype.validateOptions = function() {
   }
 };
 
-export default TranslateCall;
+module.exports = TranslateCall;

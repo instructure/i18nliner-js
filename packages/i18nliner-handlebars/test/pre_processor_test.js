@@ -1,10 +1,10 @@
 /* global describe, it, before, after */
 
-import {assert} from "chai";
-import sinon from "sinon";
-import Handlebars from "handlebars";
-import Errors from "../lib/errors";
-import PreProcessor from "../lib/pre_processor";
+const {assert} = require("chai");
+const sinon = require("sinon");
+const Handlebars = require("handlebars");
+const Errors = require("../lib/errors");
+const PreProcessor = require("../lib/pre_processor");
 
 describe("PreProcessor", function() {
   before(function() {

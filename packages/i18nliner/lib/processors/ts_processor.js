@@ -1,6 +1,6 @@
-import { parse } from "@babel/parser";
-import JsProcessor from "./js_processor";
-import I18nliner from "../i18nliner";
+const { parse } = require("@babel/parser");
+const JsProcessor = require("./js_processor");
+const {config} = require("../config");
 
 function TsProcessor(translations, options) {
   JsProcessor.call(this, translations, options);
@@ -12,9 +12,9 @@ TsProcessor.prototype.defaultPattern = ["**/*.ts", "**/*.tsx"];
 
 TsProcessor.prototype.parse = function (source) {
   return parse(source, {
-    plugins: [...I18nliner.config.babylonPlugins, "typescript"],
+    plugins: [...config.babylonPlugins, "typescript"],
     sourceType: "module",
   });
 };
 
-export default TsProcessor;
+module.exports = TsProcessor;

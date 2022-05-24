@@ -16,8 +16,7 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-var I18nlinerHbs = require("@instructure/i18nliner-handlebars").default;
-var PreProcessor = require("@instructure/i18nliner-handlebars/dist/lib/pre_processor").default;
+var {PreProcessor} = require("@instructure/i18nliner-handlebars");
 var Handlebars = require("handlebars");
 var AST = Handlebars.AST;
 var StringNode = AST.StringNode;

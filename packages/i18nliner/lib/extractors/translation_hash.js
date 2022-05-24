@@ -1,4 +1,4 @@
-import Errors from '../errors';
+const Errors = require('../errors');
 
 function TranslationHash() {
   this.translations = {};
@@ -35,5 +35,4 @@ TranslationHash.prototype.getScope = function(parts, meta) {
   return context;
 };
 
-export default TranslationHash;
-
+module.exports = TranslationHash;

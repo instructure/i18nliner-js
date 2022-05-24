@@ -1,9 +1,8 @@
-import fs from "fs";
-import Handlebars from "handlebars";
-import AbstractProcessor from "@instructure/i18nliner/dist/lib/processors/abstract_processor";
-
-import PreProcessor from "./pre_processor";
-import Extractor from "./extractor";
+const fs = require("fs");
+const Handlebars = require("handlebars");
+const { AbstractProcessor } = require("@instructure/i18nliner");
+const PreProcessor = require("./pre_processor");
+const Extractor = require("./extractor");
 
 var HbsProcessor = function(translations, options) {
   AbstractProcessor.call(this, translations, options);
@@ -33,4 +32,4 @@ HbsProcessor.prototype.preProcess = function(source) {
   return ast;
 };
 
-export default HbsProcessor;
+module.exports = HbsProcessor;

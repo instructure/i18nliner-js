@@ -16,17 +16,20 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-const JsProcessor = require('@instructure/i18nliner/dist/lib/processors/js_processor')['default'];
-const ScopedESMExtractor = require('../lib/scoped_esm_extractor');
 const dedent = require('dedent')
+const ScopedESMExtractor = require('../lib/scoped_esm_extractor');
+const {assert} = require('chai')
+const {JsProcessor} = require('@instructure/i18nliner');
 
 describe('ScopedESMExtractor', () => {
   it('tracks scope through the call to @canvas/i18n#useScope', () => {
-    expect(extract(dedent`
+    const { translations: translationHash } = extract(dedent`
       import { useScope } from '@canvas/i18n'
       const I18n = useScope('foo')
       I18n.t('keyed', 'something')
-    `).translations.translations).toEqual({
+    `)
+
+    assert.deepEqual(translationHash.translations, {
       foo: {
         keyed: 'something'
       }
@@ -34,11 +37,13 @@ describe('ScopedESMExtractor', () => {
   })
 
   it('tracks scope through the call to a renamed @canvas/i18n#useScope specifier', () => {
-    expect(extract(dedent`
+    const { translations: translationHash } = extract(dedent`
       import { useScope as useI18nScope } from '@canvas/i18n'
       const I18n = useI18nScope('foo')
       I18n.t('keyed', 'something')
-    `).translations.translations).toEqual({
+    `)
+
+    assert.deepEqual(translationHash.translations, {
       foo: {
         keyed: 'something'
       }
@@ -46,14 +51,16 @@ describe('ScopedESMExtractor', () => {
   })
 
   it('tracks scope through assignment', () => {
-    expect(extract(dedent`
+    const { translations: translationHash } = extract(dedent`
       import { useScope } from '@canvas/i18n'
 
       let I18n
 
       I18n = useScope('foo')
       I18n.t('keyed', 'something')
-    `).translations.translations).toEqual({
+    `)
+
+    assert.deepEqual(translationHash.translations, {
       foo: {
         keyed: 'something'
       }
@@ -80,7 +87,7 @@ describe('ScopedESMExtractor', () => {
       }
     `)
 
-    expect(translationHash.translations).toEqual({
+    assert.deepEqual(translationHash.translations, {
       foo: { key: 'hello' },
       bar: { key: 'world' },
       inferred_7cf5962e: 'inferred'
@@ -88,7 +95,7 @@ describe('ScopedESMExtractor', () => {
   })
 
   it('extracts translations', () => {
-    expect(extract(dedent`
+    const { translations: translationHash } = extract(dedent`
       import { useScope } from '@canvas/i18n'
 
       const I18n = useScope('foo')
@@ -97,7 +104,9 @@ describe('ScopedESMExtractor', () => {
       I18n.t('inferred')
       I18n.t('keyed', 'Keyed')
       I18n.t('nested.keyed', 'Nested')
-    `).translations.translations).toEqual({
+    `)
+
+    assert.deepEqual(translationHash.translations, {
       absolute: 'Unscoped',
       foo: {
         keyed: 'Keyed',
@@ -110,32 +119,32 @@ describe('ScopedESMExtractor', () => {
   })
 
   it('throws if no scope was defined by the time t() was called', () => {
-    expect(() => {
+    assert.throws(() => {
       extract(dedent`
         import I18n from '@canvas/i18n'
         I18n.t('hello')
       `)
-    }).toThrow(/unscoped translate call/);
+    }, /unscoped translate call/);
   })
 
   it('throws if no scope was defined using the "useScope" specifier', () => {
-    expect(() => {
+    assert.throws(() => {
       extract(dedent`
         import { useScope } from '@canvas/i18n'
         const I18n = somethingElse('foo')
         I18n.t('hello')
       `)
-    }).toThrow(/unscoped translate call/);
+    }, /unscoped translate call/);
   })
 
   it('throws if no scope was defined using the "useScope" interface from @canvas/i18n', () => {
-    expect(() => {
+    assert.throws(() => {
       extract(dedent`
         function useScope() {}
         const I18n = useScope('foo')
         I18n.t('hello')
       `)
-    }).toThrow(/unscoped translate call/);
+    }, /unscoped translate call/);
   })
 });
 

@@ -1,4 +1,4 @@
-import TranslateCall from "@instructure/i18nliner/dist/lib/extractors/translate_call";
+const { TranslateCall } = require("@instructure/i18nliner");
 
 /*
  * hbs-capable version of TranslateCall
@@ -44,4 +44,4 @@ TCall.prototype.processHash = function(pairs) {
   return result;
 };
 
-export default TCall;
+module.exports = TCall;

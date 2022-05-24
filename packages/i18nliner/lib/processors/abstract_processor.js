@@ -1,7 +1,7 @@
 /* global process */
 
-import Globby from "gglobby";
-import I18nliner from "../i18nliner";
+const Globby = require("gglobby");
+const {config,ignore} = require("../config");
 
 function chdir(dir, cb) {
   var origDir = process.cwd();
@@ -36,7 +36,7 @@ AbstractProcessor.prototype.files = function(directory) {
     var fileScope = Globby.
       select(pattern).
       reject(["/node_modules", "/bower_components"]).
-      reject(I18nliner.ignore());
+      reject(ignore());
     if (this.only) {
       var only = this.only instanceof Array ? this.only : [this.only];
       fileScope = fileScope.select(only);
@@ -72,8 +72,8 @@ AbstractProcessor.prototype.checkFile = function(file) {
 
 AbstractProcessor.prototype.getDirectories = function() {
   if (this.directories) return this.directories;
-  if (I18nliner.config.directories.length) return I18nliner.config.directories;
-  return [I18nliner.config.basePath];
+  if (config.directories.length) return config.directories;
+  return [config.basePath];
 };
 
-export default AbstractProcessor;
+module.exports = AbstractProcessor;

@@ -1,7 +1,7 @@
-import fs from "fs";
-import mkdirp from "mkdirp";
-import Check from "./check";
-import I18nliner from '../../lib/i18nliner';
+const fs = require("fs");
+const mkdirp = require("mkdirp");
+const Check = require("./check");
+const I18nliner = require('../config');
 
 function Export(options) {
   Check.call(this, options);
@@ -24,4 +24,4 @@ Export.prototype.run = function() {
   return success;
 };
 
-export default Export;
+module.exports = Export;

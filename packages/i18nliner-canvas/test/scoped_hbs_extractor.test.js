@@ -16,17 +16,19 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-const HbsProcessor = require('@instructure/i18nliner-handlebars/dist/lib/hbs_processor')['default'];
+const {assert} = require('chai')
+const {HbsProcessor} = require('@instructure/i18nliner-handlebars');
 const ScopedHbsExtractor = require('../lib/scoped_hbs_extractor');
 const Handlebars = require('handlebars')
 const path = require('path')
 
 describe('ScopedHbsExtractor.readI18nScopeFromJSONFile', () => {
   it('reads the i18nScope from the accompanying .json file', () => {
-    expect(
+    assert.deepEqual(
       ScopedHbsExtractor.readI18nScopeFromJSONFile(
         path.resolve(__dirname, 'fixtures/hbs/app/views/jst/foo/_barBaz.hbs')
-      )
-    ).toEqual('foo.bar_baz')
+      ),
+      'foo.bar_baz'
+    )
   })
 });

@@ -1,8 +1,8 @@
-import fs from "fs";
-import { parse } from "@babel/parser";
-import AbstractProcessor from "./abstract_processor";
-import I18nJsExtractor from "../extractors/i18n_js_extractor";
-import I18nliner from '../i18nliner';
+const fs = require("fs");
+const { parse } = require("@babel/parser");
+const AbstractProcessor = require("./abstract_processor");
+const I18nJsExtractor = require("../extractors/i18n_js_extractor");
+const {config} = require('../config');
 
 function JsProcessor(translations, options) {
   AbstractProcessor.call(this, translations, options);
@@ -29,7 +29,7 @@ JsProcessor.prototype.sourceFor = function(file) {
 };
 
 JsProcessor.prototype.parse = function(source) {
-  return parse(source, { plugins: I18nliner.config.babylonPlugins, sourceType: "module" });
+  return parse(source, { plugins: config.babylonPlugins, sourceType: "module" });
 };
 
 JsProcessor.prototype.preProcess = function(source) {
@@ -39,4 +39,4 @@ JsProcessor.prototype.preProcess = function(source) {
   };
 };
 
-export default JsProcessor;
+module.exports = JsProcessor;

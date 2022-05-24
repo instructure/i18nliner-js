@@ -1,8 +1,8 @@
-import pluralize from './pluralize';
-import Utils from "./utils";
-import I18nliner from './i18nliner';
-import getSlug from 'speakingurl';
-import crc32 from 'crc32';
+const pluralize = require('./pluralize');
+const Utils = require("./utils");
+const {config} = require('./config');
+const getSlug = require('speakingurl');
+const crc32 = require('crc32');
 
 var CallHelpers = {
   ALLOWED_PLURALIZATION_KEYS: ["zero", "one", "few", "many", "other"],
@@ -49,7 +49,7 @@ var CallHelpers = {
 
   keyifyUnderscored: function(string) {
     var key = getSlug(string, {separator: '_', lang: false}).replace(/[-_]+/g, '_');
-    return key.substring(0, I18nliner.config.underscoredKeyLength);
+    return key.substring(0, config.underscoredKeyLength);
   },
 
   keyifyUnderscoredCrc32: function(string) {
@@ -58,7 +58,7 @@ var CallHelpers = {
   },
 
   keyify: function(string) {
-    switch (I18nliner.config.inferredKeyFormat) {
+    switch (config.inferredKeyFormat) {
       case 'underscored':
         return this.keyifyUnderscored(string);
       case 'underscored_crc32':
@@ -149,4 +149,4 @@ var CallHelpers = {
   }
 };
 
-export default CallHelpers;
+module.exports = CallHelpers;

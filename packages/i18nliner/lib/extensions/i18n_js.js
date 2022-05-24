@@ -1,5 +1,5 @@
-import CallHelpers from '../call_helpers';
-import Utils from '../utils';
+const CallHelpers = require('../call_helpers');
+const Utils = require('../utils');
 
 var extend = function(I18n) {
   var htmlEscape = Utils.htmlEscape;
@@ -66,4 +66,4 @@ var extend = function(I18n) {
   I18n.t = I18n.translate;
 };
 
-export default extend;
+module.exports = extend;

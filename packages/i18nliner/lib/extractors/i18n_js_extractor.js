@@ -1,10 +1,8 @@
-import traverse from "@babel/traverse";
-
-import TranslateCall from "./translate_call";
-import Utils from "../utils";
-import CallHelpers from "../call_helpers";
-import TranslationHash from "./translation_hash";
-import I18nliner from "../i18nliner";
+const { default: traverse } = require("@babel/traverse");
+const TranslateCall = require("./translate_call");
+const Utils = require("../utils");
+const CallHelpers = require("../call_helpers");
+const TranslationHash = require("./translation_hash");
 
 function I18nJsExtractor(options) {
   this.ast = options.ast;
@@ -126,4 +124,4 @@ I18nJsExtractor.prototype.stringFromTemplateLiteral = function(node) {
   return this.UNSUPPORTED_EXPRESSION;
 }
 
-export default I18nJsExtractor;
+module.exports = I18nJsExtractor;

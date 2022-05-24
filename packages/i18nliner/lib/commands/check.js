@@ -1,9 +1,6 @@
-import clc from "cli-color";
-
-import TranslationHash from "../extractors/translation_hash";
-import GenericCommand from "./generic_command";
-import JsProcessor from "../processors/js_processor";
-import TsProcessor from "../processors/ts_processor";
+const clc = require("cli-color");
+const TranslationHash = require("../extractors/translation_hash");
+const GenericCommand = require("./generic_command");
 
 var red = clc.red;
 var green = clc.green;
@@ -106,6 +103,6 @@ Check.prototype.run = function() {
   return this.isSuccess();
 };
 
-Check.processors = { JsProcessor, TsProcessor };
+Check.processors = require('../processors');
 
-export default Check;
+module.exports = Check;
