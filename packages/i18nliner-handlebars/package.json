@@ -1,0 +1,55 @@
+{
+  "name": "@instructure/i18nliner-handlebars",
+  "description": "handlebars i18n made simple",
+  "version": "1.0.3",
+  "license": "MIT",
+  "private": false,
+  "contributors": [
+    "Jon Jensen",
+    "Stanley Stuart",
+    "Ahmad Amireh"
+  ],
+  "homepage": "https://github.com/instructure/i18nliner-handlebars",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/instructure/i18nliner-handlebars.git"
+  },
+  "main": "./dist/lib/main",
+  "devDependencies": {
+    "@babel/cli": "^7.12.7",
+    "@babel/core": "^7.12.7",
+    "@babel/preset-env": "^7.12.7",
+    "@instructure/i18nliner": "^2.1.0",
+    "chai": "^3.5.0",
+    "eslint": "^7.14.0",
+    "handlebars": "~1.3.0",
+    "jsdom": "^16.4.0",
+    "mocha": "^8.2.1",
+    "sinon": "^9.2.1"
+  },
+  "scripts": {
+    "build": "babel -d dist/lib lib",
+    "clean": "rm -rf dist tmp/test",
+    "lint": "eslint lib test",
+    "test": "babel -d tmp/test test && babel -d tmp/lib lib && mocha tmp/test",
+    "prepublishOnly": "npm run clean && npm run build && npm run lint && npm run test"
+  },
+  "peerDependencies": {
+    "handlebars": "~1.3.0",
+    "@instructure/i18nliner": "^2.1.0",
+    "jsdom": "^14, ^15, ^16"
+  },
+  "dependencies": {},
+  "bugs": {
+    "url": "https://github.com/instructure/i18nliner-handlebars/issues"
+  },
+  "directories": {
+    "lib": "lib",
+    "test": "test"
+  },
+  "keywords": [
+    "i18nliner",
+    "handlebars",
+    "i18n"
+  ]
+}
