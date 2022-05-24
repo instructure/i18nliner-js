@@ -69,8 +69,11 @@ const scanFilesFromI18nrc = ({ cwd, files = [], ignore = [], include = [] }) => 
       )
     )
   }
+
+  return filesByProcessor
 }
 
+exports.getFiles = () => filesByProcessor
 exports.getFilesForProcessor = name => filesByProcessor[name]
 exports.loadConfigFromDirectory = loadConfigFromDirectory
 exports.scanFilesFromI18nrc = scanFilesFromI18nrc

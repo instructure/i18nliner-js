@@ -17,7 +17,7 @@
  */
 
 const HbsProcessor = require('@instructure/i18nliner-handlebars/dist/lib/hbs_processor')['default'];
-const ScopedHbsExtractor = require('../js/scoped_hbs_extractor');
+const ScopedHbsExtractor = require('../lib/scoped_hbs_extractor');
 const Handlebars = require('handlebars')
 const path = require('path')
 

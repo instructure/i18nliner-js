@@ -16,8 +16,8 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-const JsProcessor = require('i18nliner/dist/lib/processors/js_processor')['default'];
-const ScopedESMExtractor = require('../js/scoped_esm_extractor');
+const JsProcessor = require('@instructure/i18nliner/dist/lib/processors/js_processor')['default'];
+const ScopedESMExtractor = require('../lib/scoped_esm_extractor');
 const dedent = require('dedent')
 
 describe('ScopedESMExtractor', () => {
