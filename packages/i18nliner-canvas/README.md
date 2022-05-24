@@ -35,7 +35,7 @@ are defined (similar to `.gitignore`):
 
 ```json
 // file: app/.i18nignore
-foo 
+foo
 bar/**/*.js
 ```
 
@@ -56,5 +56,5 @@ app
         └── c
 ```
 
-A file under `app/a/b/c/` is subject to exclusion according to rules found in 
+A file under `app/a/b/c/` is subject to exclusion according to rules found in
 both `app/.i18nignore` and `app/a/.i18nignore`.

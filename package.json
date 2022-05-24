@@ -1,23 +1,7 @@
 {
-  "name": "@instructure/i18nliner-packages",
-  "version": "0.0.0",
-  "private": true,
   "workspaces": [
     "packages/i18nliner",
     "packages/i18nliner-canvas",
     "packages/i18nliner-handlebars"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/instructure/i18nliner-js.git"
-  },
-  "authors": [
-    "Jon Jensen",
-    "Ahmad Amireh <ahmad@instructure.com>"
-  ],
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/instructure/i18nliner-js/issues"
-  },
-  "homepage": "https://github.com/instructure/i18nliner-js#readme"
+  ]
 }

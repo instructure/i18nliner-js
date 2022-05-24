@@ -1,9 +1,9 @@
 {
   "name": "@instructure/i18nliner-canvas",
   "description": "i18nliner, canvas style",
-  "private": true,
   "main": "./lib/main",
-  "version": "0.0.1",
+  "version": "1.0.0",
+  "license": "AGPL-3.0",
   "dependencies": {
     "@instructure/i18nliner": "^3.0.0",
     "@instructure/i18nliner-handlebars": "^2.0.0",
