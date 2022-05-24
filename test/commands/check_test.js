@@ -15,7 +15,7 @@ describe('Check', function() {
           {"welcome_name_4c6ebc3a": 'welcome, %{name}'}
         );
         assert.equal(checker.errors.length, 1);
-        assert.match(checker.errors[0], /^invalid signature/);
+        assert.match(checker.errors[0], /invalid signature/);
       });
     });
 
@@ -28,7 +28,7 @@ describe('Check', function() {
           {"welcome_fname_45c9b6bf": 'welcome, %{fname}'}
         );
         assert.equal(checker.errors.length, 1);
-        assert.match(checker.errors[0], /^invalid signature/);
+        assert.match(checker.errors[0], /invalid signature/);
       });
     });
   });

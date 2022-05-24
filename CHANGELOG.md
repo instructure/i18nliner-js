@@ -1,3 +1,42 @@
+## 3.0.0
+
+**Error reporting format**
+
+Error reporting format was changed to make it easier to scan. Messages are now
+consistently formatted as `[file]:[line]: [message]`, which is potentially a
+breaking change if you were relying on the format to parse messages.
+
+Output before this change:
+
+```
+...........................................F..F.
+
+1)
+invalid signature on line 1: <unsupported expression>
+./test/fixtures/i18n_js/invalid.js
+
+2)
+invalid signature on line 4: <unsupported expression>
+./test/fixtures/i18n_ts/invalid.ts
+
+Finished in 0.9 seconds
+
+48 files, 12 strings, 2 failures
+```
+
+Output after this change:
+
+```
+...........................................F..F.
+
+./test/fixtures/i18n_js/invalid.js:1: invalid signature: <unsupported expression>
+./test/fixtures/i18n_ts/invalid.ts:4: invalid signature: <unsupported expression>
+
+Finished in 0.9 seconds
+
+48 files, 12 strings, 2 failures
+```
+
 ## 2.1.0
 
 - `I18nJsExtractor#buildTranslateCall` now receives the Path as an additional
