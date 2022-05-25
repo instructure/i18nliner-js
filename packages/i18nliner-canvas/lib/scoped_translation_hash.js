@@ -16,7 +16,7 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-var {TranslationHash} = require("@instructure/i18nliner");
+var TranslationHash = require("@instructure/i18nliner/translation_hash");
 
 function keys(obj) {
   var result = [];

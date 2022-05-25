@@ -19,7 +19,7 @@
 const mkdirp = require("mkdirp");
 const path = require("path");
 const scanner = require("../lib/scanner");
-const {loadConfig} = require('@instructure/i18nliner')
+const {loadConfig} = require('@instructure/i18nliner/config')
 const { Commands } = require("../lib/main");
 const { assert } = require('chai');
 

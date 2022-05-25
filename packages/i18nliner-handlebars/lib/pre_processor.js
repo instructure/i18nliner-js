@@ -2,7 +2,7 @@
 
 const Handlebars = require("handlebars");
 const { JSDOM } = require("jsdom");
-const { CallHelpers } = require("@instructure/i18nliner");
+const CallHelpers = require("@instructure/i18nliner/call_helpers");
 const Errors = require("./errors");
 
 var dom = (function(){

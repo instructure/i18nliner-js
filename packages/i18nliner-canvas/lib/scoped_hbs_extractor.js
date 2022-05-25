@@ -16,10 +16,8 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-const {
-  HbsExtractor,
-  HbsTranslateCall
-} = require('@instructure/i18nliner-handlebars')
+const HbsExtractor = require('@instructure/i18nliner-handlebars/hbs_extractor');
+const HbsTranslateCall = require('@instructure/i18nliner-handlebars/hbs_translate_call');
 const ScopedHbsTranslateCall = require("./scoped_translate_call")(HbsTranslateCall);
 const path = require('path')
 const fs = require('fs')

@@ -16,8 +16,8 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-var { Commands, TranslateCall } = require("@instructure/i18nliner");
-var Check = Commands.Check;
+var {Check} = require("@instructure/i18nliner/commands");
+var TranslateCall = require("@instructure/i18nliner/translate_call");
 var mkdirp = require("mkdirp");
 var fs = require("fs");
 

@@ -5,7 +5,11 @@
   "license": "MIT",
   "private": false,
   "exports": {
-    ".": "./lib/index.js"
+    ".": "./lib/index.js",
+    "./hbs_extractor": "./lib/extractor.js",
+    "./hbs_processor": "./lib/hbs_processor.js",
+    "./hbs_translate_call": "./lib/t_call.js",
+    "./hbs_pre_processor": "./lib/pre_processor.js"
   },
   "contributors": [
     "Jon Jensen",

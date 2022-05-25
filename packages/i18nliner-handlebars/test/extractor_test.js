@@ -4,7 +4,8 @@ const {assert} = require("chai");
 const Handlebars = require("handlebars");
 const Extractor = require("../lib/extractor");
 const PreProcessor = require("../lib/pre_processor");
-const { Errors, TranslationHash } = require("@instructure/i18nliner");
+const TranslationHash = require("@instructure/i18nliner/translation_hash");
+const Errors = require("@instructure/i18nliner/errors");
 
 describe("Extractor", function() {
   function extract(source) {

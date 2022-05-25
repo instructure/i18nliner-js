@@ -20,15 +20,12 @@ const CoffeeScript = require("coffee-script");
 const babylon = require("@babel/parser");
 const fs = require('fs');
 const scanner = require("./scanner");
-const { HbsProcessor } = require("@instructure/i18nliner-handlebars");
-const {
-  AbstractProcessor,
-  CallHelpers,
-  Commands,
-  config,
-  JsProcessor,
-} = require("@instructure/i18nliner");
-
+const HbsProcessor = require("@instructure/i18nliner-handlebars/hbs_processor");
+const AbstractProcessor = require("@instructure/i18nliner/abstract_processor");
+const CallHelpers = require("@instructure/i18nliner/call_helpers");
+const Commands = require("@instructure/i18nliner/commands");
+const {config} = require("@instructure/i18nliner/config");
+const JsProcessor = require("@instructure/i18nliner/js_processor");
 const Check = Commands.Check;
 
 // tell i18nliner's babylon how to handle `import('../foo').then`

@@ -1,4 +1,4 @@
-const { TranslateCall } = require("@instructure/i18nliner");
+const TranslateCall = require("@instructure/i18nliner/translate_call");
 
 /*
  * hbs-capable version of TranslateCall

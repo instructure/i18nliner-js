@@ -1,6 +1,6 @@
 const fs = require("fs");
 const Handlebars = require("handlebars");
-const { AbstractProcessor } = require("@instructure/i18nliner");
+const AbstractProcessor = require("@instructure/i18nliner/abstract_processor");
 const PreProcessor = require("./pre_processor");
 const Extractor = require("./extractor");
 

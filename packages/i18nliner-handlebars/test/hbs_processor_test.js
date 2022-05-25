@@ -1,10 +1,8 @@
 /* global describe, it */
 
 const {assert} = require("chai");
-const I18nliner = require("@instructure/i18nliner");
+const TranslationHash = require("@instructure/i18nliner/translation_hash");
 const HbsProcessor = require("../lib/hbs_processor");
-
-var TranslationHash = I18nliner.TranslationHash;
 
 describe("HbsProcessor", function() {
   describe("checkContents", function() {

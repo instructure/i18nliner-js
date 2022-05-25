@@ -17,7 +17,7 @@
  */
 
 const {assert} = require('chai')
-const {HbsProcessor} = require('@instructure/i18nliner-handlebars');
+const HbsProcessor = require('@instructure/i18nliner-handlebars/hbs_processor');
 const ScopedHbsExtractor = require('../lib/scoped_hbs_extractor');
 const Handlebars = require('handlebars')
 const path = require('path')

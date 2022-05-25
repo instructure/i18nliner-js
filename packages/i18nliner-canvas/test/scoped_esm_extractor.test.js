@@ -19,7 +19,7 @@
 const dedent = require('dedent')
 const ScopedESMExtractor = require('../lib/scoped_esm_extractor');
 const {assert} = require('chai')
-const {JsProcessor} = require('@instructure/i18nliner');
+const JsProcessor = require('@instructure/i18nliner/js_processor');
 
 describe('ScopedESMExtractor', () => {
   it('tracks scope through the call to @canvas/i18n#useScope', () => {

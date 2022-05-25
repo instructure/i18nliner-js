@@ -8,8 +8,17 @@
     "i18nliner": "./bin/i18nliner"
   },
   "exports": {
-    ".": "./lib/index.js"
+    "./abstract_processor": "./lib/processors/abstract_processor.js",
+    "./call_helpers": "./lib/call_helpers.js",
+    "./commands": "./lib/commands.js",
+    "./config": "./lib/config.js",
+    "./errors": "./lib/errors.js",
+    "./i18n_js_extractor": "./lib/extractors/i18n_js_extractor.js",
+    "./js_processor": "./lib/processors/js_processor.js",
+    "./translate_call": "./lib/extractors/translate_call.js",
+    "./translation_hash": "./lib/extractors/translation_hash.js"
   },
+
   "files": [
     "bin",
     "dist",
