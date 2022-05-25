@@ -1,4 +1,7 @@
 {
+  "plugins": [
+    "@instructure/i18nliner-canvas"
+  ],
   "files": [
     {
       "pattern": "**/*.{coffee,js,ts,tsx}",

@@ -16,21 +16,15 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { useScope } from '@canvas/i18n'
+const HbsProcessor = require("@instructure/i18nliner-handlebars/hbs_processor");
+const ScopedHbsExtractor = require("./scoped_hbs_extractor");
+const ScopedHbsPreProcessor = require("./scoped_hbs_pre_processor");
 
-const I18n = useScope('esm')
-
-I18n.t('my_key', 'Hello world')
-I18n.t("#absolute.key", "Absolute key");
-I18n.t("Inferred key");
-I18n.t("nested.relative_key", "Relative key in nested scope");
-
-function a() {
-  const I18n = useScope('foo')
-  I18n.t("relative_key", "Relative key");
+class ScopedHbsProcessor extends HbsProcessor {
+  static names = ['hbs'];
 }
 
-function b() {
-  const I18n = useScope('bar')
-  I18n.t("relative_key", "Another relative key");
-}
+ScopedHbsProcessor.prototype.Extractor = ScopedHbsExtractor;
+ScopedHbsProcessor.prototype.PreProcessor = ScopedHbsPreProcessor;
+
+module.exports = ScopedHbsProcessor;

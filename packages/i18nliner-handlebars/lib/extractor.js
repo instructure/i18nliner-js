@@ -1,5 +1,4 @@
 const TCall = require("./t_call");
-const Visitor = require("./visitor");
 
 function Extractor(ast, options){
   options = options || {};
@@ -7,23 +6,61 @@ function Extractor(ast, options){
   this.helperKey = options.helperKey || 't';
 }
 
-Extractor.prototype = Object.create(Visitor);
-
 Extractor.prototype.forEach = function(handler) {
   this.handler = handler;
   this.process(this.ast);
 };
 
-Extractor.prototype.processSexpr = function(sexpr) {
-  Visitor.processSexpr.call(this, sexpr);
-  if (sexpr.id.string === this.helperKey) {
-    this.processTranslateCall(sexpr);
-  }
-};
-
 Extractor.prototype.buildTranslateCall = function(sexpr) {
   return new TCall(sexpr);
 };
+
+Extractor.prototype.process = function(ast) {
+  var statements = ast.statements
+    , statementsLen = statements.length
+    , i;
+  for (i = 0; i < statementsLen; i++) {
+    this.processExpression(statements[i]);
+  }
+}
+
+Extractor.prototype.processExpression = function(statement) {
+  switch (statement.type) {
+    case 'block':
+      this.process(statement.program);
+      if (statement.inverse)
+        this.process(statement.inverse);
+      break;
+    case 'mustache':
+      this.processSexpr(statement.sexpr);
+      break;
+    case 'sexpr':
+      this.processSexpr(statement);
+      break;
+  }
+}
+
+Extractor.prototype.processSexpr = function(sexpr) {
+  var i
+    , len
+    , items;
+  if (sexpr.type === 'sexpr') {
+    this.processExpression(sexpr.id);
+    items = sexpr.params;
+    for (i = 0, len = items.length; i < len; i++) {
+      this.processExpression(items[i]);
+    }
+    if (sexpr.hash) {
+      items = sexpr.hash.pairs;
+      for (i = 0, len = items.length; i < len; i++) {
+        this.processExpression(items[i][1]);
+      }
+    }
+  }
+  if (sexpr.id.string === this.helperKey) {
+    this.processTranslateCall(sexpr);
+  }
+}
 
 Extractor.prototype.processTranslateCall = function(sexpr) {
   var call = this.buildTranslateCall(sexpr)

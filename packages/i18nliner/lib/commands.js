@@ -13,14 +13,9 @@ function capitalize(string) {
 
 var Commands = {
   run: function(name, options) {
-    options = options || {};
     var Command = this[capitalize(name)];
     if (Command) {
-      try {
-        return (new Command(options)).run();
-      } catch (e) {
-        error(e.message + "\n");
-      }
+      return (new Command(options || {})).run();
     } else {
       error("unknown command " + name + "\n");
     }

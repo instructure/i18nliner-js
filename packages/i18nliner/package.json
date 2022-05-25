@@ -13,12 +13,14 @@
     "./commands": "./lib/commands.js",
     "./config": "./lib/config.js",
     "./errors": "./lib/errors.js",
-    "./i18n_js_extractor": "./lib/extractors/i18n_js_extractor.js",
+    "./i18n_js_extractor": "./lib/processors/js_processor/i18n_js_extractor.js",
     "./js_processor": "./lib/processors/js_processor.js",
-    "./translate_call": "./lib/extractors/translate_call.js",
+    "./translate_call": "./lib/processors/js_processor/translate_call.js",
     "./translation_hash": "./lib/extractors/translation_hash.js"
   },
-
+  "imports": {
+    "#errors": "./lib/errors.js"
+  },
   "files": [
     "bin",
     "dist",
@@ -48,9 +50,9 @@
   "devDependencies": {
     "chai": "~3.5.0",
     "eslint": "^7",
-    "mocha": "~3.2.0",
+    "mocha": "^10.0.0",
     "rimraf": "~2.6.1",
-    "sinon": "~1.17.7",
+    "sinon": "^14.0.0",
     "temp": "~0.8.3"
   },
   "publishConfig": {

@@ -1,4 +1,5 @@
 const TranslateCall = require("@instructure/i18nliner/translate_call");
+const {UNSUPPORTED_EXPRESSION} = require('@instructure/i18nliner/errors');
 
 /*
  * hbs-capable version of TranslateCall
@@ -30,7 +31,7 @@ TCall.prototype.processArguments = function(sexpr) {
 };
 
 TCall.prototype.evaluateExpression = function(node) {
-  return  node.type === 'STRING' ? node.string : this.UNSUPPORTED_EXPRESSION;
+  return  node.type === 'STRING' ? node.string : UNSUPPORTED_EXPRESSION;
 };
 
 TCall.prototype.processHash = function(pairs) {
@@ -40,7 +41,7 @@ TCall.prototype.processHash = function(pairs) {
     , len = pairs.length
     , i;
   for (i = 0; i < len; i++)
-    result[pairs[i][0]] = this.UNSUPPORTED_EXPRESSION;
+    result[pairs[i][0]] = UNSUPPORTED_EXPRESSION;
   return result;
 };
 

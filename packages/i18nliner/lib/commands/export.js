@@ -1,3 +1,4 @@
+const path = require("path");
 const fs = require("fs");
 const mkdirp = require("mkdirp");
 const Check = require("./check");
@@ -15,8 +16,10 @@ Export.prototype.run = function() {
   var locale = 'en';
   var translations = {};
   translations[locale] = this.translations.translations;
-  this.outputFile = I18nliner.config.basePath + '/' + (this.options.outputFile || "config/locales/generated/" + locale + ".json");
-  mkdirp.sync(this.outputFile.replace(/\/[^\/]+$/, ''));
+  this.outputFile = path.resolve(this.options.outputFile ||
+    (I18nliner.config.basePath + "/config/locales/generated/" + locale + ".json")
+  );
+  mkdirp.sync(path.dirname(this.outputFile));
   if (success) {
     fs.writeFileSync(this.outputFile, JSON.stringify(translations));
     this.print("Wrote default translations to " + this.outputFile + "\n");

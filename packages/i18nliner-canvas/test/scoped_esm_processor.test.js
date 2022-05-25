@@ -17,19 +17,19 @@
  */
 
 const dedent = require('dedent')
-const ScopedESMExtractor = require('../lib/scoped_esm_extractor');
 const {assert} = require('chai')
-const JsProcessor = require('@instructure/i18nliner/js_processor');
+const Translations = require('@instructure/i18nliner/translation_hash')
+const ScopedEsmProcessor = require('../lib/scoped_esm_processor')
 
-describe('ScopedESMExtractor', () => {
+describe('ScopedEsmProcessor', () => {
   it('tracks scope through the call to @canvas/i18n#useScope', () => {
-    const { translations: translationHash } = extract(dedent`
+    const { translations } = extract(dedent`
       import { useScope } from '@canvas/i18n'
       const I18n = useScope('foo')
       I18n.t('keyed', 'something')
     `)
 
-    assert.deepEqual(translationHash.translations, {
+    assert.deepEqual(translations, {
       foo: {
         keyed: 'something'
       }
@@ -37,13 +37,13 @@ describe('ScopedESMExtractor', () => {
   })
 
   it('tracks scope through the call to a renamed @canvas/i18n#useScope specifier', () => {
-    const { translations: translationHash } = extract(dedent`
+    const { translations } = extract(dedent`
       import { useScope as useI18nScope } from '@canvas/i18n'
       const I18n = useI18nScope('foo')
       I18n.t('keyed', 'something')
     `)
 
-    assert.deepEqual(translationHash.translations, {
+    assert.deepEqual(translations, {
       foo: {
         keyed: 'something'
       }
@@ -51,7 +51,7 @@ describe('ScopedESMExtractor', () => {
   })
 
   it('tracks scope through assignment', () => {
-    const { translations: translationHash } = extract(dedent`
+    const { translations } = extract(dedent`
       import { useScope } from '@canvas/i18n'
 
       let I18n
@@ -60,7 +60,7 @@ describe('ScopedESMExtractor', () => {
       I18n.t('keyed', 'something')
     `)
 
-    assert.deepEqual(translationHash.translations, {
+    assert.deepEqual(translations, {
       foo: {
         keyed: 'something'
       }
@@ -68,7 +68,7 @@ describe('ScopedESMExtractor', () => {
   })
 
   it('resolves (i18n) scopes across different lexical scopes', () => {
-    const { translations: translationHash } = extract(dedent`
+    const { translations } = extract(dedent`
       import { useScope } from '@canvas/i18n'
 
       function a() {
@@ -87,7 +87,7 @@ describe('ScopedESMExtractor', () => {
       }
     `)
 
-    assert.deepEqual(translationHash.translations, {
+    assert.deepEqual(translations, {
       foo: { key: 'hello' },
       bar: { key: 'world' },
       inferred_7cf5962e: 'inferred'
@@ -95,19 +95,21 @@ describe('ScopedESMExtractor', () => {
   })
 
   it('extracts translations', () => {
-    const { translations: translationHash } = extract(dedent`
+    const { translations } = extract(dedent`
       import { useScope } from '@canvas/i18n'
 
       const I18n = useScope('foo')
 
-      I18n.t('#absolute', 'Unscoped')
+      I18n.t('#absolute.key', 'Foreign')
       I18n.t('inferred')
       I18n.t('keyed', 'Keyed')
       I18n.t('nested.keyed', 'Nested')
     `)
 
-    assert.deepEqual(translationHash.translations, {
-      absolute: 'Unscoped',
+    assert.deepEqual(translations, {
+      absolute: {
+        key: 'Foreign',
+      },
       foo: {
         keyed: 'Keyed',
         nested: {
@@ -149,11 +151,9 @@ describe('ScopedESMExtractor', () => {
 });
 
 function extract(source) {
-  const extractor = new ScopedESMExtractor({
-    ast: JsProcessor.prototype.parse(source)
-  })
+  const processor = new ScopedEsmProcessor(new Translations(), {})
 
-  extractor.run()
+  processor.checkContents(processor.parse(source))
 
-  return extractor;
+  return processor.translations;
 }

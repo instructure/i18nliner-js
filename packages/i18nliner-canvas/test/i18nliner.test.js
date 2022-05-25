@@ -19,49 +19,53 @@
 const mkdirp = require("mkdirp");
 const path = require("path");
 const scanner = require("../lib/scanner");
-const {loadConfig} = require('@instructure/i18nliner/config')
+const {reset: resetConfig, loadConfig} = require('@instructure/i18nliner/config')
 const { Commands } = require("../lib/main");
 const { assert } = require('chai');
 
 class PanickyCheck extends Commands.Check {
   // don't print to TTY
-  print() {};
+  // print() {};
 
   // and do throw errors
   checkWrapper(file, checker) {
-    try {
-      checker(file)
-    }
-    catch (e) {
-      throw new Error(e.message)
-    }
+    checker(file)
   };
 };
 
 const expand = dir => path.resolve(__dirname, dir)
 
 var subject = function(dir) {
-  var command = new PanickyCheck({});
-  scanner.scanFilesFromI18nrc(scanner.loadConfigFromDirectory(dir))
-  command.run();
-  return command.translations.masterHash.translations;
+  var owd = process.cwd()
+
+  process.chdir(dir)
+
+  try {
+    loadConfig()
+    const command = new PanickyCheck({});
+    scanner.scanFilesFromI18nrc(scanner.loadConfigFromDirectory(dir))
+    command.run();
+    return command.translations.translations;
+  }
+  finally {
+    process.chdir(owd)
+  }
 }
 
 describe("i18nliner-canvas", function() {
-  beforeEach(() => {
-    loadConfig()
-  })
-
   afterEach(function() {
     scanner.reset()
+    resetConfig()
   })
 
   describe("handlebars", function() {
     it("extracts default translations", function() {
       assert.deepEqual(subject(expand("./fixtures/hbs")), {
-        absolute_key: "Absolute key",
+        absolute: {
+          key: "Absolute key",
+          inline_with_absolute_key: "Inline with absolute key",
+        },
         inferred_key_c49e3743: "Inferred key",
-        inline_with_absolute_key: "Inline with absolute key",
         inline_with_inferred_key_88e68761: "Inline with inferred key",
         foo: {
           bar_baz: {
@@ -93,7 +97,9 @@ describe("i18nliner-canvas", function() {
   describe("javascript", function() {
     it("extracts default translations", function() {
       assert.deepEqual(subject(expand("./fixtures/js")), {
-        absolute_key: "Absolute key",
+        absolute: {
+          key: "Absolute key",
+        },
         inferred_key_c49e3743: "Inferred key",
         esm: {
           my_key: 'Hello world',

@@ -1,13 +1,13 @@
 const pluralize = require('./pluralize');
 const Utils = require("./utils");
 const {config} = require('./config');
+const {UNSUPPORTED_EXPRESSION} = require('./errors');
 const getSlug = require('speakingurl');
 const crc32 = require('crc32');
 
 var CallHelpers = {
   ALLOWED_PLURALIZATION_KEYS: ["zero", "one", "few", "many", "other"],
   REQUIRED_PLURALIZATION_KEYS: ["one", "other"],
-  UNSUPPORTED_EXPRESSION: [],
 
   normalizeKey: function(key) {
     return key;
@@ -28,7 +28,7 @@ var CallHelpers = {
   },
 
   isObject: function(object) {
-    return typeof object === 'object' && object !== this.UNSUPPORTED_EXPRESSION;
+    return typeof object === 'object' && object !== UNSUPPORTED_EXPRESSION;
   },
 
   validDefault: function(allowBlank) {

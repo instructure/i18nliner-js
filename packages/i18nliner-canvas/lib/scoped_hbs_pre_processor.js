@@ -22,9 +22,11 @@ var AST = Handlebars.AST;
 var StringNode = AST.StringNode;
 var HashNode = AST.HashNode;
 
+const ScopedHbsPreProcessor = {...PreProcessor}
+
 // slightly more lax interpolation key format for hbs to support any
 // existing translations (camel case and dot syntax, e.g. "foo.bar.baz")
-PreProcessor.normalizeInterpolationKey = function(key) {
+ScopedHbsPreProcessor.normalizeInterpolationKey = function(key) {
   key = key.replace(/[^a-z0-9.]/gi, ' ');
   key = key.trim();
   key = key.replace(/ +/g, '_');
@@ -32,14 +34,13 @@ PreProcessor.normalizeInterpolationKey = function(key) {
 };
 
 // add explicit scope to all t calls (post block -> inline transformation)
-var _processStatement = PreProcessor.processStatement;
-PreProcessor.processStatement = function(statement) {
-  statement = _processStatement.call(this, statement) || statement;
+ScopedHbsPreProcessor.processStatement = function(statement) {
+  statement = PreProcessor.processStatement.call(this, statement) || statement;
   if (statement.type === 'mustache' && statement.id.string === 't')
     return this.injectScope(statement);
 }
 
-PreProcessor.injectScope = function(node) {
+ScopedHbsPreProcessor.injectScope = function(node) {
   var pairs;
   if (!node.hash)
     node.hash = node.sexpr.hash = new HashNode([]);
@@ -51,3 +52,5 @@ PreProcessor.injectScope = function(node) {
   }
   return node;
 }
+
+module.exports = ScopedHbsPreProcessor;

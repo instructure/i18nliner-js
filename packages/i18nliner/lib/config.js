@@ -1,6 +1,5 @@
 const fs = require('fs')
-const config = {
-  inferredKeyFormat: 'underscored_crc32',
+const defaults = {
   /*
     literal:
       Just use the literal string as its translation key
@@ -10,27 +9,32 @@ const config = {
     underscored_crc32:
       Underscored, with a checksum at the end to avoid collisions
   */
+  inferredKeyFormat: 'underscored_crc32',
 
   underscoredKeyLength: 50,
 
-  basePath: ".",
   /*
     Where to look for files. Additionally, the output json file
     will be relative to this.
    */
+  basePath: ".",
 
-  directories: [],
   /*
     Further limit extraction to these directories. If empty,
     I18nliner will look everywhere under <basePath>
    */
+  directories: [],
 
-  babylonPlugins: ["jsx", "classProperties", "objectRestSpread"]
   /*
     The set of babylon plugins to use in AST parsing.
     See: https://github.com/babel/babel/tree/master/packages/babylon#plugins
    */
+  babylonPlugins: ["jsx", "classProperties", "objectRestSpread"],
+
+  processors: {},
 };
+
+const config = {...defaults};
 
 exports.ignore = () => {
   var ignores = [];
@@ -54,9 +58,9 @@ const set = (key, value, fn) => {
 }
 
 exports.loadConfig = () => {
-  var config = maybeLoadJSON(".i18nrc");
+  var userConfig = maybeLoadJSON(".i18nrc");
 
-  for (var key in config) {
+  for (var key in userConfig) {
     if (key !== "plugins") {
       set(key, config[key]);
     }
@@ -64,8 +68,8 @@ exports.loadConfig = () => {
 
   // plugins need to be loaded last to allow them to get
   //  the full config option when they are initialized
-  if (config.plugins && config.plugins.length > 0) {
-    loadPlugins(config.plugins);
+  if (userConfig.plugins && userConfig.plugins.length > 0) {
+    loadPlugins(userConfig.plugins);
   }
 }
 
@@ -81,7 +85,7 @@ const loadPlugins = (plugins) => {
     }
 
     plugin({
-      processors: require('./processors'),
+      processors: config.processors,
       config: config
     });
   });
@@ -99,5 +103,7 @@ const maybeLoadJSON = function (path){
   return data;
 }
 
+exports.defaults = defaults;
 exports.config = config;
 exports.set = set;
+exports.reset = () => { Object.assign(config, defaults) }

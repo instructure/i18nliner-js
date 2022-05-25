@@ -16,15 +16,14 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-const createScopedTranslateCall = require("./scoped_translate_call")
-const Errors = require("./errors");
-const TranslateCall = require("@instructure/i18nliner/translate_call");
-const I18nJsExtractor = require("@instructure/i18nliner/i18n_js_extractor");
+const extract = require("@instructure/i18nliner/i18n_js_extractor");
+const {default: traverse} = require("@babel/traverse");
 
-const ScopedTranslateCall = createScopedTranslateCall(TranslateCall);
-const CANVAS_I18N_PACKAGE = '@canvas/i18n'
-const CANVAS_I18N_USE_SCOPE_SPECIFIER = 'useScope'
-const CANVAS_I18N_RECEIVER = 'I18n'
+const {
+  CANVAS_I18N_PACKAGE,
+  CANVAS_I18N_USE_SCOPE_SPECIFIER,
+  CANVAS_I18N_RECEIVER,
+} = require('./params')
 
 // This extractor implementation is suitable for ES modules where a module
 // imports the "useScope" function from the @canvas/i18n package and assigns the
@@ -65,56 +64,60 @@ const CANVAS_I18N_RECEIVER = 'I18n'
 //     import { useScope } from '@canvas/i18n'
 //     const smth = useScope('foo')
 //
-class ScopedESMExtractor extends I18nJsExtractor {
-  constructor() {
-    super(...arguments)
+function extractCallsAndScopes(ast) {
+  // the identifier for the "useScope" specifier imported from @canvas/i18n,
+  // which may be renamed
+  let useScopeIdentifier = null
 
-    // the identifier for the "useScope" specifier imported from @canvas/i18n,
-    // which may be renamed
-    this.useScopeIdentifier = null
+  // mapping of "I18n" receivers to the (i18n) scopes they were assigned in
+  // the call to useScope
+  let receiverScopeMapping = new WeakMap()
 
-    // mapping of "I18n" receivers to the (i18n) scopes they were assigned in
-    // the call to useScope
-    this.receiverScopeMapping = new WeakMap()
-  };
+  traverse(ast, {
+    enter(path) {
+      // import { useScope } from '@canvas/i18n'
+      //          ^^^^^^^^
+      // import { useScope as blah } from '@canvas/i18n'
+      //                      ^^^^
+      if (!useScopeIdentifier && path.type === 'ImportDeclaration') {
+        useScopeIdentifier = trackUseScopeIdentifier(path);
+      }
+      // let I18n
+      //     ^^^^
+      // I18n = useScope('foo')
+      //                  ^^^
+      // (this happens in CoffeeScript when compiled to JS)
+      else if (useScopeIdentifier && path.type === 'AssignmentExpression') {
+        const binding = indexScope({
+          path,
+          left: path.node.left,
+          right: path.node.right,
+          specifier: useScopeIdentifier
+        })
 
-  enter(path) {
-    // import { useScope } from '@canvas/i18n'
-    //          ^^^^^^^^
-    // import { useScope as blah } from '@canvas/i18n'
-    //                      ^^^^
-    if (!this.useScopeIdentifier && path.type === 'ImportDeclaration') {
-      trackUseScopeIdentifier.call(this, path);
+        if (binding) {
+          receiverScopeMapping.set(binding.receiver, binding.scope)
+        }
+      }
+      // const I18n = useScope('foo')
+      //       ^^^^             ^^^
+      else if (useScopeIdentifier && path.type === 'VariableDeclarator') {
+        const binding = indexScope({
+          path,
+          left: path.node.id,
+          right: path.node.init,
+          specifier: useScopeIdentifier
+        })
+
+        if (binding) {
+          receiverScopeMapping.set(binding.receiver, binding.scope)
+        }
+      }
     }
-    // let I18n
-    //     ^^^^
-    // I18n = useScope('foo')
-    //                  ^^^
-    // (this happens in CoffeeScript when compiled to JS)
-    else if (this.useScopeIdentifier && path.type === 'AssignmentExpression') {
-      indexScopeFromAssignment.call(this, path)
-    }
-    // const I18n = useScope('foo')
-    //       ^^^^             ^^^
-    else if (this.useScopeIdentifier && path.type === 'VariableDeclarator') {
-      indexScopeFromDeclaration.call(this, path)
-    }
+  })
 
-    return super.enter(...arguments)
-  };
-
-  buildTranslateCall(line, method, args, path) {
-    const binding = path.scope.getBinding(CANVAS_I18N_RECEIVER)
-    const scope = this.receiverScopeMapping.get(binding)
-
-    if (scope) {
-      return new ScopedTranslateCall(line, method, args, scope);
-    }
-    else {
-      throw new Errors.UnscopedTranslateCall(line)
-    }
-  };
-};
+  return [receiverScopeMapping, extract(ast)]
+}
 
 function trackUseScopeIdentifier({ node }) {
   if (
@@ -136,22 +139,21 @@ function trackUseScopeIdentifier({ node }) {
       specifier.local.type === 'Identifier' &&
       specifier.local.name
     ) {
-      this.useScopeIdentifier = specifier.local.name
+      return specifier.local.name
     }
   }
 };
 
-function indexScopeFromAssignment(path) {
-  return indexScope.call(this, path, path.node.left, path.node.right)
-};
-
-function indexScopeFromDeclaration(path) {
-  return indexScope.call(this, path, path.node.id, path.node.init)
-};
-
+// Find out if it's a call to whatever the "useScope" specifier was bound to
+//
+//     import { useScope as useI18nScope } from '@canvas/i18n'
+//
+//     const I18n = useI18nScope('foo')
+//           ^^^^                 ^^^
+//
 // left: Identifier
 // right: CallExpression
-function indexScope(path, left, right) {
+function indexScope({ path, left, right, specifier }) {
   if (
     left &&
     left.type === 'Identifier' &&
@@ -160,17 +162,17 @@ function indexScope(path, left, right) {
     right.type === 'CallExpression' &&
     right.callee &&
     right.callee.type === 'Identifier' &&
-    right.callee.name === this.useScopeIdentifier &&
+    right.callee.name === specifier &&
     right.arguments &&
     right.arguments.length === 1 &&
     right.arguments[0].type === 'StringLiteral' &&
     right.arguments[0].value
   ) {
-    this.receiverScopeMapping.set(
-      path.scope.getBinding(CANVAS_I18N_RECEIVER),
-      right.arguments[0].value
-    )
+    return {
+      receiver: path.scope.getBinding(CANVAS_I18N_RECEIVER),
+      scope: right.arguments[0].value
+    }
   }
 };
 
-module.exports = ScopedESMExtractor;
+module.exports = extractCallsAndScopes;

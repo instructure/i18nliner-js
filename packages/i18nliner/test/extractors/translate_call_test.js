@@ -1,8 +1,9 @@
 /* global describe, it */
 const {assert} = require("chai");
-const TranslateCall = require("../../lib/extractors/translate_call");
-const Errors = require("../../lib/errors");
-const {set} = require("../../lib/config");
+const TranslateCall = require("@instructure/i18nliner/translate_call");
+const Errors = require("@instructure/i18nliner/errors");
+const {set} = require("@instructure/i18nliner/config");
+const {UNSUPPORTED_EXPRESSION} = Errors;
 
 describe("TranslateCall", function() {
   function call() {
@@ -34,7 +35,7 @@ describe("TranslateCall", function() {
 
     it("should require a literal default", function() {
       assert.throws(function() {
-        call("key.key", TranslateCall.prototype.UNSUPPORTED_EXPRESSION);
+        call("key.key", UNSUPPORTED_EXPRESSION);
       }, Errors.InvalidSignature);
     });
 
@@ -46,7 +47,7 @@ describe("TranslateCall", function() {
 
     it("should ensure options is an object literal, if provided", function() {
       assert.throws(function() {
-        call("key", "value", TranslateCall.prototype.UNSUPPORTED_EXPRESSION);
+        call("key", "value", UNSUPPORTED_EXPRESSION);
       }, Errors.InvalidSignature);
     });
   });
@@ -145,7 +146,7 @@ describe("TranslateCall", function() {
 
     it("should reject invalid count defaults", function() {
       assert.throws(function() {
-        call({one: "asdf", other: TranslateCall.prototype.UNSUPPORTED_EXPRESSION}, {count: 1});
+        call({one: "asdf", other: UNSUPPORTED_EXPRESSION}, {count: 1});
       }, Errors.InvalidPluralizationDefault);
     });
 

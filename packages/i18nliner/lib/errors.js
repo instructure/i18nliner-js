@@ -1,4 +1,4 @@
-const CallHelpers = require("./call_helpers");
+const UNSUPPORTED_EXPRESSION = [];
 
 function wordify(string) {
   return string.replace(/[A-Z]/g, function(s) {
@@ -12,7 +12,7 @@ function parseDetails(details) {
   if (typeof details === "string" || !details.length) details = [details];
   for (var i = 0; i < details.length; i++) {
     part = details[i];
-    part = part === CallHelpers.UNSUPPORTED_EXPRESSION ?
+    part = part === UNSUPPORTED_EXPRESSION ?
       "<unsupported expression>" :
       JSON.stringify(part);
     parts.push(part);
@@ -23,7 +23,7 @@ function parseDetails(details) {
 
 var Errors = {
   register: function(name) {
-    const klass = class extends Error {
+    this[name] = class extends Error {
       constructor(line, details) {
         if (details) {
           super(wordify(name) + ": " + parseDetails(details))
@@ -36,8 +36,8 @@ var Errors = {
         this.line = line;
       }
     };
-    klass.name = name;
-    this[name] = klass;
+
+    Object.defineProperty(this[name], 'name', { value: name })
   }
 };
 
@@ -52,3 +52,4 @@ Errors.register('KeyAsScope');
 Errors.register('KeyInUse');
 
 module.exports = Errors;
+module.exports.UNSUPPORTED_EXPRESSION = UNSUPPORTED_EXPRESSION

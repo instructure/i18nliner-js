@@ -1,6 +1,6 @@
-const CallHelpers = require('../call_helpers');
-const Errors = require("../errors");
-const Utils = require("../utils");
+const CallHelpers = require('../../call_helpers');
+const Errors = require("#errors");
+const Utils = require("../../utils");
 
 function TranslateCall(line, method, args) {
   this.line = line;

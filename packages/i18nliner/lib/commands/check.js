@@ -1,6 +1,11 @@
 const clc = require("cli-color");
 const TranslationHash = require("../extractors/translation_hash");
 const GenericCommand = require("./generic_command");
+const Errors = require('../errors')
+const {config, defaults} = require('../config')
+
+defaults.processors.JsProcessor = require('../processors/js_processor');
+defaults.processors.TsProcessor = require('../processors/ts_processor');
 
 var red = clc.red;
 var green = clc.green;
@@ -27,8 +32,7 @@ Check.prototype.TranslationHash = TranslationHash;
 
 Check.prototype.setUpProcessors = function() {
   this.processors = [];
-  for (var key in Check.processors) {
-    var Processor = Check.processors[key];
+  for (const Processor of Object.values(config.processors)) {
     this.processors.push(
       new Processor(this.translations, {
         translations: this.translations,
@@ -55,7 +59,8 @@ Check.prototype.checkWrapper = function(file, checker) {
       file.slice(process.cwd().length + 1) :
       file
     ;
-    if (!(e instanceof Error)) {
+
+    if (Errors.hasOwnProperty(e.constructor.name)) {
       this.errors.push(`${friendlyFile}:${e.line}: ${e.message}`);
       this.print(red("F"));
     }
@@ -102,7 +107,5 @@ Check.prototype.run = function() {
   this.printSummary();
   return this.isSuccess();
 };
-
-Check.processors = require('../processors');
 
 module.exports = Check;

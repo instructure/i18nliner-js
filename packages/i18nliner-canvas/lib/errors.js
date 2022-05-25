@@ -19,5 +19,6 @@
 const Errors = require("@instructure/i18nliner/errors");
 
 Errors.register("UnscopedTranslateCall");
+Errors.register("UnscopedAbsoluteKey");
 
 module.exports = Errors

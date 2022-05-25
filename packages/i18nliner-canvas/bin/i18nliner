@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /*
- * Copyright (C) 2014 - present Instructure, Inc.
+ * Copyright (C) 2022 - present Instructure, Inc.
  *
  * This file is part of Canvas.
  *
@@ -19,6 +19,10 @@
  */
 
 const argv = require('minimist')(process.argv.slice(2));
+const {Commands,scanner} = require('..')
+const {loadConfig} = require('@instructure/i18nliner/config')
+
+loadConfig()
 
 scanner.scanFilesFromI18nrc(
   scanner.loadConfigFromDirectory(
@@ -26,4 +30,15 @@ scanner.scanFilesFromI18nrc(
   )
 )
 
-Commands.run(argv._[0], argv) || (process.exitCode = 1);
+switch (argv._[0]) {
+  case 'check':
+    (new Commands.Check(argv)).run() || (process.exitCode = 1);
+    break;
+  case 'export':
+    (new Commands.Export(argv)).run() || (process.exitCode = 1);
+    break;
+  default:
+    console.error(`invalid command: ${argv._[0]}`)
+    process.exit(1)
+}
+

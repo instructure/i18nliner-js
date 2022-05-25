@@ -16,21 +16,33 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { useScope } from '@canvas/i18n'
+const TranslationHash = require('@instructure/i18nliner/translation_hash')
 
-const I18n = useScope('esm')
+class ScopedTranslationHashAndIndex extends TranslationHash {
+  constructor() {
+    super()
+    this.index = []
+  }
 
-I18n.t('my_key', 'Hello world')
-I18n.t("#absolute.key", "Absolute key");
-I18n.t("Inferred key");
-I18n.t("nested.relative_key", "Relative key in nested scope");
+  set(key, value, meta) {
+    super.set(key, value, meta);
 
-function a() {
-  const I18n = useScope('foo')
-  I18n.t("relative_key", "Relative key");
+    const record = { key, scope: meta.scope }
+
+    if (meta.absolute) {
+      record.scope = key.split('.')[0]
+    }
+
+    if (meta.scope !== record.scope) {
+      record.used_in = meta.scope
+    }
+
+    this.index.push(record)
+  }
+
+  toJSON() {
+    return this.index
+  }
 }
 
-function b() {
-  const I18n = useScope('bar')
-  I18n.t("relative_key", "Another relative key");
-}
+module.exports = ScopedTranslationHashAndIndex;

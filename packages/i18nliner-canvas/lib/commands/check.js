@@ -16,21 +16,13 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { useScope } from '@canvas/i18n'
+const HbsProcessor = require("@instructure/i18nliner-handlebars/hbs_processor");
+const {Check} = require("@instructure/i18nliner/commands");
+const ScopedTranslationHashAndIndex = require('../scoped_translation_hash_and_index')
 
-const I18n = useScope('esm')
+// swap out the defaults for our scope-aware varieties
+class ScopedCheck extends Check {};
+ScopedCheck.prototype.TranslationHash = ScopedTranslationHashAndIndex;
 
-I18n.t('my_key', 'Hello world')
-I18n.t("#absolute.key", "Absolute key");
-I18n.t("Inferred key");
-I18n.t("nested.relative_key", "Relative key in nested scope");
+module.exports = ScopedCheck;
 
-function a() {
-  const I18n = useScope('foo')
-  I18n.t("relative_key", "Relative key");
-}
-
-function b() {
-  const I18n = useScope('bar')
-  I18n.t("relative_key", "Another relative key");
-}

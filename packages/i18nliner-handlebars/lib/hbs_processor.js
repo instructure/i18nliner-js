@@ -13,6 +13,7 @@ HbsProcessor.prototype.constructor = HbsProcessor;
 
 HbsProcessor.prototype.defaultPattern = "**/*.hbs";
 HbsProcessor.prototype.Extractor = Extractor;
+HbsProcessor.prototype.PreProcessor = PreProcessor;
 
 HbsProcessor.prototype.checkContents = function(source, path) {
   var extractor = new this.Extractor(this.preProcess(source), {path: path});
@@ -28,7 +29,7 @@ HbsProcessor.prototype.sourceFor = function(file) {
 
 HbsProcessor.prototype.preProcess = function(source) {
   var ast = Handlebars.parse(source.toString());
-  PreProcessor.process(ast);
+  this.PreProcessor.process(ast);
   return ast;
 };
 

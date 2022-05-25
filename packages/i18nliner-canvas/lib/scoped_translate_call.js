@@ -15,6 +15,7 @@
  * You should have received a copy of the GNU Affero General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+const {UnscopedAbsoluteKey} = require('./errors')
 
 module.exports = function(TranslateCall) {
   var ScopedTranslateCall = function() {
@@ -27,18 +28,25 @@ module.exports = function(TranslateCall) {
   ScopedTranslateCall.prototype = Object.create(TranslateCall.prototype);
   ScopedTranslateCall.prototype.constructor = ScopedTranslateCall;
 
-  ScopedTranslateCall.prototype.normalizeKey = function(key) {
-    if (key[0] === '#')
-      return key.slice(1);
-    else
-      return this.scope + "." + key;
-  };
-
   ScopedTranslateCall.prototype.normalize = function() {
     // TODO: make i18nliner-js use the latter, just like i18nliner(.rb) ...
     // i18nliner-handlebars can't use the former
-    if (!this.inferredKey && !this.options.i18n_inferred_key)
-      this.key = this.normalizeKey(this.key);
+    if (!this.inferredKey && !this.options.i18n_inferred_key) {
+      const key = this.key
+
+      if (key[0] === '#') {
+        if (!key.includes('.')) {
+          throw new UnscopedAbsoluteKey(this.line, key)
+        }
+
+        this.key = key.slice(1);
+        this.absolute = true;
+      }
+      else {
+        this.key = this.scope + "." + key;
+      }
+    }
+
     TranslateCall.prototype.normalize.call(this);
   };
 
