@@ -1,0 +1,46 @@
+{
+  "name": "@instructure/i18nliner-runtime",
+  "description": "i18nliner extensions for i18n-js",
+  "version": "1.0.0",
+  "license": "MIT",
+  "homepage": "https://github.com/instructure/i18nliner-js",
+  "exports": {
+    ".": "./lib/index.js"
+  },
+  "files": [
+    "lib",
+    "CHANGELOG.md",
+    "LICENSE",
+    "README.md"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/instructure/i18nliner-js.git"
+  },
+  "authors": [
+    "Jon Jensen",
+    "Ahmad Amireh <ahmad@instructure.com>"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "peerDependencies": {
+    "i18n-js": "^3"
+  },
+  "devDependencies": {
+    "c8": "^7.11.3",
+    "eslint": "^8.16.0",
+    "i18n-js": "^3.9.2",
+    "sinon": "^14.0.0"
+  },
+  "scripts": {
+    "prepublishOnly": "npm run lint && npm run test",
+    "lint": "eslint lib",
+    "test": "mocha test",
+    "coverage": "c8 --reporter=html mocha test"
+  },
+  "dependencies": {
+    "crc32": "^0.2.2",
+    "speakingurl": "^13.0.0"
+  }
+}
