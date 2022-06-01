@@ -65,7 +65,7 @@ const objectFrom = (node) => {
   return object;
 };
 
-const evaluatePropName = ({ key, value }) => {
+const evaluatePropName = ({ key }) => {
   if (key.type === 'Identifier') {
     return key.name
   }

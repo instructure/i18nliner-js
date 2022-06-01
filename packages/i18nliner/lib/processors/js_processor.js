@@ -18,7 +18,7 @@ JsProcessor.prototype.checkContents = function(source) {
   if (fileData.skip) return;
   const ast = fileData.ast || this.parse(fileData.source);
 
-  for (const {line, receiver, method, args, path} of extract(ast)) {
+  for (const {line, method, args, path} of extract(ast)) {
     var call = new TranslateCall(line, method, args, path);
     var translations = call.translations();
 

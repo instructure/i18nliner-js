@@ -80,7 +80,6 @@ Check.prototype.printSummary = function() {
   var summary;
   var errors = this.errors;
   var errorsLen = errors.length;
-  var i;
 
   var translationCount = sum(processors, 'translationCount');
   var fileCount = sum(processors, 'fileCount');

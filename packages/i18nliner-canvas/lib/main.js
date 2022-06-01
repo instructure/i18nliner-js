@@ -35,7 +35,7 @@ AbstractProcessor.prototype.checkFiles = function() {
 }
 
 
-CallHelpers.keyPattern = /^\#?\w+(\.\w+)+$/ // handle our absolute keys
+CallHelpers.keyPattern = /^#?\w+(\.\w+)+$/ // handle our absolute keys
 
 exports.register = require('./register');
 exports.scanner = scanner

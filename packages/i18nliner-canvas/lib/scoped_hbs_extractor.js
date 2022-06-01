@@ -22,16 +22,6 @@ const ScopedHbsTranslateCall = require("./scoped_translate_call")(HbsTranslateCa
 const path = require('path')
 const fs = require('fs')
 
-// remove path stuff we don't want in the scope
-const pathRegex = new RegExp(
-  '.*(' +
-    'ui/shared/jst' +
-    '|ui/features/screenreader_gradebook/jst' +
-    '|packages/[^/]+/src/jst' +
-    '|gems/plugins/[^/]+/app/views/jst' +
-  ')'
-)
-
 function ScopedHbsExtractor(ast, options) {
   // read the scope from the i18nScope property in the accompanying .json file:
   this.scope = ScopedHbsExtractor.readI18nScopeFromJSONFile(
@@ -46,10 +36,6 @@ function ScopedHbsExtractor(ast, options) {
 
 ScopedHbsExtractor.prototype = Object.create(HbsExtractor.prototype);
 ScopedHbsExtractor.prototype.constructor = ScopedHbsExtractor;
-
-ScopedHbsExtractor.prototype.normalizePath = function(path) {
-  return path.replace(pathRegex, "").replace(/^([^\/]+\/)templates\//, '$1');
-};
 
 ScopedHbsExtractor.prototype.buildTranslateCall = function(sexpr) {
   if (!this.scope) {

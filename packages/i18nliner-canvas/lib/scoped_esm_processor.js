@@ -38,7 +38,7 @@ class ScopedEsmProcessor extends JsProcessor {
 
     const [receiverScopes, calls] = extract(ast)
 
-    for (const {line, receiver, method, args, path} of calls) {
+    for (const {line, method, args, path} of calls) {
       const binding = path.scope.getBinding(CANVAS_I18N_RECEIVER)
       const scope = receiverScopes.get(binding)
 

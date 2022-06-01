@@ -1,5 +1,3 @@
-/* global process */
-
 const Check = require("./commands/check");
 const Export = require("./commands/export");
 

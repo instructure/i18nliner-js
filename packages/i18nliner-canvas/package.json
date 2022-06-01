@@ -15,9 +15,11 @@
   },
   "devDependencies": {
     "coffee-script": "^1.12.4",
-    "dedent": "^0.7.0"
+    "dedent": "^0.7.0",
+    "eslint": "^8.16.0"
   },
   "scripts": {
-    "test": "mocha"
+    "test": "mocha",
+    "lint": "eslint lib"
   }
 }

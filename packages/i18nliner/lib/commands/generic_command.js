@@ -1,5 +1,3 @@
-/* global process */
-
 function GenericCommand(options) {
   this.options = options;
   if (this.options.silent) {

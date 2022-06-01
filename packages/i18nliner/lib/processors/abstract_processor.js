@@ -1,5 +1,3 @@
-/* global process */
-
 const Globby = require("gglobby");
 const {config,ignore} = require("../config");
 

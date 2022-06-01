@@ -1,16 +1,21 @@
 {
+  "extends": "eslint:recommended",
   "env": {
-    "browser": true,
-    "node": true
-  },
-  "parserOptions": {
-    "ecmaVersion": 6,
-    "sourceType": "module"
+    "node": true,
+    "es2022": true
   },
   "rules": {
-    "indent": [2, 2, {"SwitchCase": 1}],
-    "quotes": 0,
-    "strict": 0,
-    "curly": 0
-  }
+    "no-extra-semi": "off",
+    "no-new-object": "error",
+    "no-prototype-builtins": "off",
+    "no-shadow": "error",
+    "no-useless-call": "error",
+    "no-useless-escape": "off",
+  },
+  "overrides": [
+    {
+      "files": ["lib/extensions/*.js"],
+      "env": { "browser": true, "node": false }
+    }
+  ]
 }

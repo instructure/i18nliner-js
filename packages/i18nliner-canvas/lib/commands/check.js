@@ -16,7 +16,6 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-const HbsProcessor = require("@instructure/i18nliner-handlebars/hbs_processor");
 const {Check} = require("@instructure/i18nliner/commands");
 const ScopedTranslationHashAndIndex = require('../scoped_translation_hash_and_index')
 
