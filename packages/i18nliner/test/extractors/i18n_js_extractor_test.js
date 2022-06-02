@@ -2,7 +2,7 @@ const JsProcessor = require("@instructure/i18nliner/js_processor");
 const sinon = require('sinon')
 const {assert} = require("chai");
 const extract = require("@instructure/i18nliner/i18n_js_extractor");
-const {UNSUPPORTED_EXPRESSION} = require('#errors')
+const {UNSUPPORTED_EXPRESSION} = require('@instructure/i18nliner/errors')
 
 describe("extract", function() {
   const parse = source => JsProcessor.prototype.parse(source);

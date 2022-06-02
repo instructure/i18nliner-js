@@ -2,26 +2,12 @@
 const {assert} = require("chai");
 const TranslateCall = require("@instructure/i18nliner/translate_call");
 const Errors = require("@instructure/i18nliner/errors");
-const {set} = require("@instructure/i18nliner/config");
-const {configure} = require("@instructure/i18nliner-runtime");
+const {configureRuntimeAndReset} = require("#test_util");
 const {UNSUPPORTED_EXPRESSION} = Errors;
-
-const configureRuntimeAndReset = () => {
-  let previousConfig
-
-  afterEach(() => {
-    if (previousConfig) {
-      configure(previousConfig)
-    }
-  })
-
-  return partial => {
-    previousConfig = configure(partial)
-  }
-}
 
 describe("TranslateCall", function() {
   const configureRuntimeOnce = configureRuntimeAndReset()
+  // const configureOnce = configureAndReset()
 
   function call() {
     return new TranslateCall(null, 't', [].slice.call(arguments));

@@ -1,4 +1,5 @@
 const fs = require('fs')
+const runtime = require('@instructure/i18nliner-runtime')
 const defaults = {
   /*
     Where to look for files. Additionally, the output json file
@@ -31,21 +32,16 @@ exports.ignore = () => {
   return ignores;
 }
 
-const set = (key, value, fn) => {
-  var prevValue = config[key];
-  config[key] = value;
-  if (fn) {
-    try {
-      fn();
-    }
-    finally {
-      config[key] = prevValue;
-    }
+exports.loadConfig = () => {
+  const userConfig = maybeLoadJSON(".i18nrc");
+
+  if (userConfig) {
+    return useConfig(userConfig)
   }
 }
 
-exports.loadConfig = () => {
-  const userConfig = maybeLoadJSON(".i18nrc");
+const useConfig = userConfig => {
+  const previousConfig = {...config}
 
   // for backward compat
   const runtimeConfig = {}
@@ -58,13 +54,16 @@ exports.loadConfig = () => {
     if (runtimeConfigKeys.includes(key)) {
       runtimeConfig[key] = userConfig[key]
     }
+    else if (defaults.hasOwnProperty(key)) {
+      config[key] = userConfig[key]
+    }
     else {
-      set(key, userConfig[key])
+      console.warn(`unknown configuration property: ${key}`)
     }
   }
 
   if (Object.keys(runtimeConfig).length > 0) {
-    configureRuntime(runtimeConfig)
+    runtime.configure(runtimeConfig)
   }
 
   // plugins need to be loaded last to allow them to get
@@ -72,6 +71,8 @@ exports.loadConfig = () => {
   if (userConfig.plugins && userConfig.plugins.length > 0) {
     loadPlugins(userConfig.plugins);
   }
+
+  return previousConfig
 }
 
 const loadPlugins = (plugins) => {
@@ -93,18 +94,17 @@ const loadPlugins = (plugins) => {
 }
 
 const maybeLoadJSON = function (path){
-  var data = {}
   if (fs.existsSync(path)) {
     try {
-      data = JSON.parse(fs.readFileSync(path, 'utf8'));
+      return JSON.parse(fs.readFileSync(path, 'utf8'));
     } catch (e) {
-      console.log(e);
+      console.error(e);
     }
   }
-  return data;
+
+  return null;
 }
 
 exports.defaults = defaults;
 exports.config = config;
-exports.set = set;
-exports.reset = () => { Object.assign(config, defaults) }
+exports.configure = useConfig;

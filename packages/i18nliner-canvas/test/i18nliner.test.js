@@ -19,7 +19,7 @@
 const mkdirp = require("mkdirp");
 const path = require("path");
 const scanner = require("../lib/scanner");
-const {reset: resetConfig, loadConfig} = require('@instructure/i18nliner/config')
+const {configure, loadConfig} = require('@instructure/i18nliner/config')
 const { Commands } = require("../lib/main");
 const { assert } = require('chai');
 
@@ -37,17 +37,19 @@ const expand = dir => path.resolve(__dirname, dir)
 
 var subject = function(dir) {
   var owd = process.cwd()
+  let previousConfig
 
   process.chdir(dir)
 
   try {
-    loadConfig()
+    previousConfig = loadConfig()
     const command = new PanickyCheck({});
     scanner.scanFilesFromI18nrc(scanner.loadConfigFromDirectory(dir))
     command.run();
     return command.translations.translations;
   }
   finally {
+    configure(previousConfig)
     process.chdir(owd)
   }
 }
@@ -55,7 +57,6 @@ var subject = function(dir) {
 describe("i18nliner-canvas", function() {
   afterEach(function() {
     scanner.reset()
-    resetConfig()
   })
 
   describe("handlebars", function() {

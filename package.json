@@ -4,5 +4,9 @@
     "packages/i18nliner-canvas",
     "packages/i18nliner-handlebars",
     "packages/i18nliner-runtime"
-  ]
+  ],
+  "scripts": {
+    "lint": "npm run lint --workspaces --if-present",
+    "test": "npm run test --workspaces"
+  }
 }

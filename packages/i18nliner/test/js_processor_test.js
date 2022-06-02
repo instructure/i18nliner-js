@@ -1,4 +1,4 @@
-const Errors = require("#errors");
+const Errors = require("@instructure/i18nliner/errors");
 const JsProcessor = require("../lib/processors/js_processor");
 const TranslationHash = require("@instructure/i18nliner/translation_hash");
 const {assert} = require("chai");
