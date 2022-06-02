@@ -49,7 +49,9 @@ var subject = function(dir) {
     return command.translations.translations;
   }
   finally {
-    configure(previousConfig)
+    if (previousConfig) {
+      configure(previousConfig)
+    }
     process.chdir(owd)
   }
 }

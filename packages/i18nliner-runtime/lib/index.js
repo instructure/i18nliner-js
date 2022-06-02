@@ -4,6 +4,7 @@ const ALLOWED_PLURALIZATION_KEYS = ["zero", "one", "few", "many", "other"]
 const REQUIRED_PLURALIZATION_KEYS = ["one", "other"]
 const UNSUPPORTED_EXPRESSION = Symbol.for('I18nliner.UNSUPPORTED_EXPRESSION')
 const config = {
+  HtmlSafeString: I18nlinerHtmlSafeString,
   keyPattern: /^(\w+\.)+\w+$/,
   /*
     literal:
@@ -16,7 +17,8 @@ const config = {
   */
   inferredKeyFormat: 'underscored_crc32',
   underscoredKeyLength: 50,
-  HtmlSafeString: I18nlinerHtmlSafeString,
+  inferKey: inferKey,
+  normalizeDefault: normalizeDefault,
   normalizeKey: identity,
 }
 
@@ -32,15 +34,12 @@ exports.isValidDefault = isValidDefault
 function extend(I18n, partialConfig) {
   configure(partialConfig);
 
-  const {
-    HtmlSafeString,
-    normalizeKey,
-  } = config
-
   // add html-safety hint, i.e. "%h{...}"
   I18n.placeholder = /(?:\{\{|%h?\{)(.*?)(?:\}\}?)/gm;
   I18n.interpolateWithoutHtmlSafety = I18n.interpolate;
   I18n.interpolate = function(message, options) {
+    const { HtmlSafeString } = config;
+
     var needsEscaping = false;
     var matches = message.match(I18n.placeholder) || [];
     var len = matches.length;
@@ -85,6 +84,7 @@ function extend(I18n, partialConfig) {
 
   I18n.translateWithoutI18nliner = I18n.translate;
   I18n.translate = function() {
+    const {normalizeDefault, normalizeKey} = config;
     const [key, options] = inferArguments([].slice.call(arguments));
     const normalKey = normalizeKey(key, options);
     const normalDefaultValue = options.defaultValue
@@ -117,6 +117,8 @@ function configure(customConfig) {
 }
 
 function inferArguments(args, meta) {
+  const {inferKey} = config
+
   if (args.length === 2 && typeof args[1] === 'object' && args[1].defaultValue) {
     return args;
   }
@@ -156,6 +158,8 @@ function inferArguments(args, meta) {
 }
 
 function inferKey(defaultValue, translateOptions) {
+  const {normalizeDefault} = config;
+
   if (isValidDefault(!!defaultValue, translateOptions)) {
     defaultValue = normalizeDefault(defaultValue, translateOptions);
 
