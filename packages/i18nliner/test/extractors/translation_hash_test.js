@@ -1,6 +1,6 @@
 /* global describe, it */
 const {assert} = require("chai");
-const TranslationHash = require('../../lib/extractors/translation_hash');
+const TranslationHash = require('@instructure/i18nliner/translation_hash');
 const Errors = require('../../lib/errors');
 
 describe("TranslationHash", function() {

@@ -1,4 +1,4 @@
-const Errors = require('../errors');
+const Errors = require('./errors');
 
 function TranslationHash() {
   this.translations = {};

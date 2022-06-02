@@ -15,7 +15,7 @@
     "./i18n_js_extractor": "./lib/processors/js_processor/i18n_js_extractor.js",
     "./js_processor": "./lib/processors/js_processor.js",
     "./translate_call": "./lib/processors/js_processor/translate_call.js",
-    "./translation_hash": "./lib/extractors/translation_hash.js"
+    "./translation_hash": "./lib/translation_hash.js"
   },
   "imports": {
     "#errors": "./lib/errors.js"

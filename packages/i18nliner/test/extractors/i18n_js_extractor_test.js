@@ -1,4 +1,4 @@
-const JsProcessor = require("../../lib/processors/js_processor");
+const JsProcessor = require("@instructure/i18nliner/js_processor");
 const sinon = require('sinon')
 const {assert} = require("chai");
 const extract = require("@instructure/i18nliner/i18n_js_extractor");

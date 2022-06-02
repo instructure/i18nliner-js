@@ -1,5 +1,5 @@
 const clc = require("cli-color");
-const TranslationHash = require("../extractors/translation_hash");
+const TranslationHash = require("../translation_hash");
 const GenericCommand = require("./generic_command");
 const Errors = require('../errors')
 const {config, defaults} = require('../config')
