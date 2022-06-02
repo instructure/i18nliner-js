@@ -55,7 +55,7 @@ exports.loadConfig = () => {
   ]
 
   for (const key of Object.keys(userConfig)) {
-    if (runtimeConfigKeys.include(key)) {
+    if (runtimeConfigKeys.includes(key)) {
       runtimeConfig[key] = userConfig[key]
     }
     else {

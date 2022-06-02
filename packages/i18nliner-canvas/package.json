@@ -6,6 +6,7 @@
   "license": "AGPL-3.0",
   "dependencies": {
     "@instructure/i18nliner": "^3.0.0",
+    "@instructure/i18nliner-runtime": "^1",
     "@instructure/i18nliner-handlebars": "^2.0.0",
     "ember-template-compiler": "1.8.0",
     "glob": "^7.0.3",
