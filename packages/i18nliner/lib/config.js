@@ -1,19 +1,6 @@
 const fs = require('fs')
 const defaults = {
   /*
-    literal:
-      Just use the literal string as its translation key
-    underscored:
-      Underscored ascii representation of the string, truncated to
-      <underscoredKeyLength> bytes
-    underscored_crc32:
-      Underscored, with a checksum at the end to avoid collisions
-  */
-  inferredKeyFormat: 'underscored_crc32',
-
-  underscoredKeyLength: 50,
-
-  /*
     Where to look for files. Additionally, the output json file
     will be relative to this.
    */

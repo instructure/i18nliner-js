@@ -76,7 +76,7 @@ describe("extract", function() {
     assert.ok(call)
     assert.deepEqual(call.args, [
       { one: 'just one', other: 'zomg lots' },
-      { count: [] }
+      { count: UNSUPPORTED_EXPRESSION }
     ])
   })
 
@@ -92,7 +92,7 @@ describe("extract", function() {
     assert.deepEqual(call.args, [
       'one',
       { one: '1', other: '2' },
-      { count: [] }
+      { count: UNSUPPORTED_EXPRESSION }
     ])
   })
 
@@ -102,7 +102,7 @@ describe("extract", function() {
     ))
 
     assert.ok(call)
-    assert.deepEqual(call.args, ['Foo', {bar: []}])
+    assert.deepEqual(call.args, ['Foo', {bar: UNSUPPORTED_EXPRESSION}])
   });
 
   it('marks it when an argument is an unsupported expression', () => {

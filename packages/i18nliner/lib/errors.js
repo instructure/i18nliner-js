@@ -1,4 +1,5 @@
-const UNSUPPORTED_EXPRESSION = [];
+// const UNSUPPORTED_EXPRESSION = Symbol.for('I18nliner.UNSUPPORTED_EXPRESSION')
+const UNSUPPORTED_EXPRESSION = Object.freeze({})
 
 function wordify(string) {
   return string.replace(/[A-Z]/g, function(s) {

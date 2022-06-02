@@ -1,6 +1,12 @@
-const CallHelpers = require('../../call_helpers');
 const Errors = require("#errors");
-const Utils = require("../../utils");
+const {
+  ALLOWED_PLURALIZATION_KEYS,
+  REQUIRED_PLURALIZATION_KEYS,
+  inferArguments,
+  normalizeDefault,
+  isValidDefault,
+} = require('@instructure/i18nliner-runtime')
+const {UNSUPPORTED_EXPRESSION} = Errors
 
 function TranslateCall(line, method, args) {
   this.line = line;
@@ -12,8 +18,6 @@ function TranslateCall(line, method, args) {
   this.normalize();
 }
 
-Utils.extend(TranslateCall.prototype, CallHelpers);
-
 TranslateCall.prototype.validate = function() {
   this.validateKey();
   this.validateDefault();
@@ -21,7 +25,7 @@ TranslateCall.prototype.validate = function() {
 };
 
 TranslateCall.prototype.normalize = function() {
-  this.defaultValue = this.normalizeDefault(this.defaultValue, this.options || {});
+  this.defaultValue = normalizeDefault(this.defaultValue, this.options || {});
 };
 
 TranslateCall.prototype.translations = function() {
@@ -47,11 +51,11 @@ TranslateCall.prototype.validateKey = function() {};
 TranslateCall.prototype.validateDefault = function() {
   var defaultValue = this.defaultValue;
   if (typeof defaultValue === 'object') {
-    var defaultKeys = Utils.keys(defaultValue);
+    var defaultKeys = Object.keys(defaultValue);
     var dKeys;
-    if ((dKeys = Utils.difference(defaultKeys, this.ALLOWED_PLURALIZATION_KEYS)).length > 0)
+    if ((dKeys = difference(defaultKeys, ALLOWED_PLURALIZATION_KEYS)).length > 0)
       throw new Errors.InvalidPluralizationKey(this.line, dKeys);
-    if ((dKeys = Utils.difference(this.REQUIRED_PLURALIZATION_KEYS, defaultKeys)).length > 0)
+    if ((dKeys = difference(REQUIRED_PLURALIZATION_KEYS, defaultKeys)).length > 0)
       throw new Errors.MissingPluralizationKey(this.line, dKeys);
 
     for (var k in defaultValue) {
@@ -81,7 +85,7 @@ TranslateCall.prototype.normalizeArguments = function(args) {
   if (!args.length)
     throw new Errors.InvalidSignature(this.line, args);
 
-  var others = this.inferArguments(args.slice(), this);
+  var others = inferArguments(args.slice(), this);
   var key = this.key = others.shift();
   var options = this.options = others.shift();
 
@@ -89,13 +93,13 @@ TranslateCall.prototype.normalizeArguments = function(args) {
     throw new Errors.InvalidSignature(this.line, args);
   if (typeof key !== 'string')
     throw new Errors.InvalidSignature(this.line, args);
-  if (options && !this.isObject(options))
+  if (options && (typeof options !== 'object' || options === UNSUPPORTED_EXPRESSION))
     throw new Errors.InvalidSignature(this.line, args);
   if (options) {
     this.defaultValue = options.defaultValue;
     delete options.defaultValue;
   }
-  if (!this.validDefault(true))
+  if (!isValidDefault(true, this.defaultValue))
     throw new Errors.InvalidSignature(this.line, args);
 };
 
@@ -124,3 +128,12 @@ TranslateCall.prototype.validateOptions = function() {
 };
 
 module.exports = TranslateCall;
+
+function difference(a1, a2) {
+  var result = [];
+  for (var i = 0, len = a1.length; i < len; i++) {
+    if (a2.indexOf(a1[i]) === -1)
+      result.push(a1[i]);
+  }
+  return result;
+}

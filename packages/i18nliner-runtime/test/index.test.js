@@ -232,4 +232,20 @@ describe('I18n.translate', () => {
     extend(I18n, {})
     assert(I18n.t === I18n.translate)
   })
+
+  it('truncates inferred key when they exceed the threshold', () => {
+    const longString = new Array(100).join("trolololo");
+    const maxKeyLength = 50
+
+    extend(I18n, {
+      inferredKeyFormat: 'underscored',
+      underscoredKeyLength: maxKeyLength,
+    })
+
+    I18n.translations['en'] = {
+      [longString.slice(0, maxKeyLength)]: 'hah!'
+    }
+
+    assert.equal(I18n.t(longString), 'hah!')
+  })
 })

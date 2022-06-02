@@ -9,7 +9,6 @@
   },
   "exports": {
     "./abstract_processor": "./lib/processors/abstract_processor.js",
-    "./call_helpers": "./lib/call_helpers.js",
     "./commands": "./lib/commands.js",
     "./config": "./lib/config.js",
     "./errors": "./lib/errors.js",

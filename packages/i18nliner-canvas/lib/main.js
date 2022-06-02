@@ -18,7 +18,6 @@
 
 const scanner = require("./scanner");
 const AbstractProcessor = require("@instructure/i18nliner/abstract_processor");
-const CallHelpers = require("@instructure/i18nliner/call_helpers");
 
 AbstractProcessor.prototype.checkFiles = function() {
   const names = this.constructor.names || [
@@ -33,9 +32,6 @@ AbstractProcessor.prototype.checkFiles = function() {
     this.checkWrapper(file, this.checkFile.bind(this))
   }
 }
-
-
-CallHelpers.keyPattern = /^#?\w+(\.\w+)+$/ // handle our absolute keys
 
 exports.register = require('./register');
 exports.scanner = scanner

@@ -3,9 +3,26 @@ const {assert} = require("chai");
 const TranslateCall = require("@instructure/i18nliner/translate_call");
 const Errors = require("@instructure/i18nliner/errors");
 const {set} = require("@instructure/i18nliner/config");
+const {configure} = require("@instructure/i18nliner-runtime");
 const {UNSUPPORTED_EXPRESSION} = Errors;
 
+const configureRuntimeAndReset = () => {
+  let previousConfig
+
+  afterEach(() => {
+    if (previousConfig) {
+      configure(previousConfig)
+    }
+  })
+
+  return partial => {
+    previousConfig = configure(partial)
+  }
+}
+
 describe("TranslateCall", function() {
+  const configureRuntimeOnce = configureRuntimeAndReset()
+
   function call() {
     return new TranslateCall(null, 't', [].slice.call(arguments));
   }
@@ -54,40 +71,48 @@ describe("TranslateCall", function() {
 
   describe("key inference", function() {
     it("should generate literal keys", function() {
-      set('inferredKeyFormat', 'literal', function() {
-        assert.deepEqual(
-          call("zomg key").translations(),
-          [["zomg key", "zomg key"]]
-        );
-      });
+      configureRuntimeOnce({
+        inferredKeyFormat: 'literal'
+      })
+
+      assert.deepEqual(
+        call("zomg key").translations(),
+        [["zomg key", "zomg key"]]
+      );
     });
 
     it("should generate underscored keys", function() {
-      set('inferredKeyFormat', 'underscored', function() {
-        assert.deepEqual(
-          call("zOmg -- key!!").translations(),
-          [["zomg_key", "zOmg -- key!!"]]
-        );
-      });
+      configureRuntimeOnce({
+        inferredKeyFormat: 'underscored'
+      })
+
+      assert.deepEqual(
+        call("zOmg -- key!!").translations(),
+        [["zomg_key", "zOmg -- key!!"]]
+      );
     });
 
     it("should truncate long keys", function() {
       var longString = new Array(100).join("trolololo");
 
-      set('inferredKeyFormat', 'underscored', function() {
-        assert(
-          call(longString).translations()[0][0].length < 100
-        );
-      });
+      configureRuntimeOnce({
+        inferredKeyFormat: 'underscored'
+      })
+
+      assert.isBelow(
+        call(longString).translations()[0][0].length, 100
+      );
     });
 
     it("should generate underscored + crc32 keys", function() {
-      set('inferredKeyFormat', 'underscored_crc32', function() {
-        assert.deepEqual(
-          call("zOmg key!!").translations(),
-          [["zomg_key_90a85b0b", "zOmg key!!"]]
-        );
-      });
+      configureRuntimeOnce({
+        inferredKeyFormat: 'underscored_crc32'
+      })
+
+      assert.deepEqual(
+        call("zOmg key!!").translations(),
+        [["zomg_key_90a85b0b", "zOmg key!!"]]
+      );
     });
   });
 

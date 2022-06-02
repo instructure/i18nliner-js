@@ -2,7 +2,7 @@
 
 const Handlebars = require("handlebars");
 const { JSDOM } = require("jsdom");
-const CallHelpers = require("@instructure/i18nliner/call_helpers");
+const { inferKey } = require('@instructure/i18nliner-runtime');
 const Errors = require("./errors");
 
 var dom = (function(){
@@ -177,7 +177,7 @@ var PreProcessor = {
   },
 
   inferKey: function(defaultValue) {
-    return new StringNode(CallHelpers.inferKey(defaultValue));
+    return new StringNode(inferKey(defaultValue));
   },
 
   inferParts: function(statements) {

@@ -2,22 +2,40 @@ const getSlug = require('speakingurl');
 const crc32 = require('crc32');
 const ALLOWED_PLURALIZATION_KEYS = ["zero", "one", "few", "many", "other"]
 const REQUIRED_PLURALIZATION_KEYS = ["one", "other"]
-const UNSUPPORTED_EXPRESSION = {}
 const config = {
+  keyPattern: /^(\w+\.)+\w+$/,
+  /*
+    literal:
+      Just use the literal string as its translation key
+    underscored:
+      Underscored ascii representation of the string, truncated to
+      <underscoredKeyLength> bytes
+    underscored_crc32:
+      Underscored, with a checksum at the end to avoid collisions
+  */
   inferredKeyFormat: 'underscored_crc32',
-  keyPattern: /^(\w+\.)+\w+$/
+  underscoredKeyLength: 50,
+  HtmlSafeString: I18nlinerHtmlSafeString,
+  normalizeKey: identity,
 }
 
+exports.ALLOWED_PLURALIZATION_KEYS = ALLOWED_PLURALIZATION_KEYS
+exports.REQUIRED_PLURALIZATION_KEYS = REQUIRED_PLURALIZATION_KEYS
 exports.configure = configure;
 exports.inferArguments = inferArguments;
 exports.inferKey = inferKey;
 exports.normalizeDefault = normalizeDefault;
 exports.extend = extend
+exports.isValidDefault = isValidDefault
 
-function extend(I18n, {
-  HtmlSafeString = I18nlinerHtmlSafeString,
-  normalizeKey = identity
-}) {
+function extend(I18n, partialConfig) {
+  configure(partialConfig);
+
+  const {
+    HtmlSafeString,
+    normalizeKey,
+  } = config
+
   // add html-safety hint, i.e. "%h{...}"
   I18n.placeholder = /(?:\{\{|%h?\{)(.*?)(?:\}\}?)/gm;
   I18n.interpolateWithoutHtmlSafety = I18n.interpolate;
@@ -92,7 +110,9 @@ function extend(I18n, {
 };
 
 function configure(customConfig) {
+  const previousConfig = {...config}
   Object.assign(config, customConfig)
+  return previousConfig
 }
 
 function inferArguments(args, meta) {
@@ -135,7 +155,7 @@ function inferArguments(args, meta) {
 }
 
 function inferKey(defaultValue, translateOptions) {
-  if (validDefault(!!defaultValue)) {
+  if (isValidDefault(!!defaultValue)) {
     defaultValue = normalizeDefault(defaultValue, translateOptions);
 
     if (typeof defaultValue === 'object') {
@@ -144,6 +164,30 @@ function inferKey(defaultValue, translateOptions) {
 
     return keyify(defaultValue);
   }
+}
+
+function keyify(string) {
+  switch (config.inferredKeyFormat) {
+    case 'underscored':
+      return keyifyUnderscored(string);
+    case 'underscored_crc32':
+      return keyifyUnderscoredCrc32(string);
+    default:
+      return string;
+  }
+}
+
+function keyifyUnderscored(string) {
+  return (
+    getSlug(string, {separator: '_', lang: false})
+      .replace(/[-_]+/g, '_')
+      .substring(0, config.underscoredKeyLength)
+  );
+}
+
+function keyifyUnderscoredCrc32(string) {
+  var checksum = crc32(string.length + ":" + string).toString(16);
+  return keyifyUnderscored(string) + "_" + checksum;
 }
 
 function normalizeDefault(defaultValue, translateOptions) {
@@ -209,7 +253,7 @@ function isKeyProvided(keyOrDefault, defaultOrOptions, maybeOptions) {
 }
 
 function isPluralizationHash(object) {
-  if (!isObject(object)) {
+  if (!object || typeof object !== 'object') {
     return false
   }
 
@@ -221,11 +265,6 @@ function isPluralizationHash(object) {
   );
 }
 
-function isObject(object) {
-  return typeof object === 'object' && object !== UNSUPPORTED_EXPRESSION;
-}
-
-
 function difference(a1, a2) {
   var result = [];
   for (var i = 0, len = a1.length; i < len; i++) {
@@ -235,34 +274,13 @@ function difference(a1, a2) {
   return result;
 }
 
-function validDefault(allowBlank, defaultValue) {
+function isValidDefault(allowBlank, defaultValue) {
   return (
     allowBlank &&
     (typeof defaultValue === 'undefined' || defaultValue === null) ||
     typeof defaultValue === 'string' ||
-    isObject(defaultValue)
+    (defaultValue && typeof defaultValue === 'object')
   );
-}
-
-function keyify(string) {
-  switch (config.inferredKeyFormat) {
-    case 'underscored':
-      return keyifyUnderscored(string);
-    case 'underscored_crc32':
-      return keyifyUnderscoredCrc32(string);
-    default:
-      return string;
-  }
-}
-
-function keyifyUnderscored(string) {
-  var key = getSlug(string, {separator: '_', lang: false}).replace(/[-_]+/g, '_');
-  return key.substring(0, config.underscoredKeyLength);
-}
-
-function keyifyUnderscoredCrc32(string) {
-  var checksum = crc32(string.length + ":" + string).toString(16);
-  return keyifyUnderscored(string) + "_" + checksum;
 }
 
 // ported pluralizations from active_support/inflections.rb
