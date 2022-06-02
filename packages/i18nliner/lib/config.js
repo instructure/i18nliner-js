@@ -45,12 +45,26 @@ const set = (key, value, fn) => {
 }
 
 exports.loadConfig = () => {
-  var userConfig = maybeLoadJSON(".i18nrc");
+  const userConfig = maybeLoadJSON(".i18nrc");
 
-  for (var key in userConfig) {
-    if (key !== "plugins") {
-      set(key, config[key]);
+  // for backward compat
+  const runtimeConfig = {}
+  const runtimeConfigKeys = [
+    'inferredKeyFormat',
+    'underscoredKeyLength',
+  ]
+
+  for (const key of Object.keys(userConfig)) {
+    if (runtimeConfigKeys.include(key)) {
+      runtimeConfig[key] = userConfig[key]
     }
+    else {
+      set(key, userConfig[key])
+    }
+  }
+
+  if (Object.keys(runtimeConfig).length > 0) {
+    configureRuntime(runtimeConfig)
   }
 
   // plugins need to be loaded last to allow them to get
