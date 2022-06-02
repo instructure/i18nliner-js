@@ -6,7 +6,6 @@ const {
   normalizeDefault,
   isValidDefault,
 } = require('@instructure/i18nliner-runtime')
-const {UNSUPPORTED_EXPRESSION} = Errors
 
 function TranslateCall(line, method, args) {
   this.line = line;
@@ -93,7 +92,9 @@ TranslateCall.prototype.normalizeArguments = function(args) {
     throw new Errors.InvalidSignature(this.line, args);
   if (typeof key !== 'string')
     throw new Errors.InvalidSignature(this.line, args);
-  if (options && (typeof options !== 'object' || options === UNSUPPORTED_EXPRESSION))
+  if (options === Errors.UNSUPPORTED_EXPRESSION)
+    throw new Errors.InvalidSignature(this.line, args);
+  if (options && typeof options !== 'object')
     throw new Errors.InvalidSignature(this.line, args);
   if (options) {
     this.defaultValue = options.defaultValue;

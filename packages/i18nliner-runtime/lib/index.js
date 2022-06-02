@@ -2,6 +2,7 @@ const getSlug = require('speakingurl');
 const crc32 = require('crc32');
 const ALLOWED_PLURALIZATION_KEYS = ["zero", "one", "few", "many", "other"]
 const REQUIRED_PLURALIZATION_KEYS = ["one", "other"]
+const UNSUPPORTED_EXPRESSION = Symbol.for('I18nliner.UNSUPPORTED_EXPRESSION')
 const config = {
   keyPattern: /^(\w+\.)+\w+$/,
   /*
@@ -155,10 +156,10 @@ function inferArguments(args, meta) {
 }
 
 function inferKey(defaultValue, translateOptions) {
-  if (isValidDefault(!!defaultValue)) {
+  if (isValidDefault(!!defaultValue, translateOptions)) {
     defaultValue = normalizeDefault(defaultValue, translateOptions);
 
-    if (typeof defaultValue === 'object') {
+    if (typeof defaultValue === 'object' && defaultValue.other !== UNSUPPORTED_EXPRESSION) {
       defaultValue = "" + defaultValue.other;
     }
 
@@ -188,6 +189,15 @@ function keyifyUnderscored(string) {
 function keyifyUnderscoredCrc32(string) {
   var checksum = crc32(string.length + ":" + string).toString(16);
   return keyifyUnderscored(string) + "_" + checksum;
+}
+
+function isValidDefault(allowBlank, defaultValue) {
+  return (
+    allowBlank &&
+    (typeof defaultValue === 'undefined' || defaultValue === null) ||
+    typeof defaultValue === 'string' ||
+    (defaultValue && typeof defaultValue === 'object')
+  );
 }
 
 function normalizeDefault(defaultValue, translateOptions) {
@@ -272,15 +282,6 @@ function difference(a1, a2) {
       result.push(a1[i]);
   }
   return result;
-}
-
-function isValidDefault(allowBlank, defaultValue) {
-  return (
-    allowBlank &&
-    (typeof defaultValue === 'undefined' || defaultValue === null) ||
-    typeof defaultValue === 'string' ||
-    (defaultValue && typeof defaultValue === 'object')
-  );
 }
 
 // ported pluralizations from active_support/inflections.rb
