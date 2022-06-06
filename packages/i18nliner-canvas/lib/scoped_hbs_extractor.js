@@ -20,14 +20,14 @@ const HbsExtractor = require('@instructure/i18nliner-handlebars/hbs_extractor');
 const HbsTranslateCall = require('@instructure/i18nliner-handlebars/hbs_translate_call');
 const ScopedHbsTranslateCall = require("./scoped_translate_call")(HbsTranslateCall);
 const path = require('path')
-const fs = require('fs')
 
 function ScopedHbsExtractor(ast, options) {
   // read the scope from the i18nScope property in the accompanying .json file:
-  this.scope = ScopedHbsExtractor.readI18nScopeFromJSONFile(
-    // resolve relative to process.cwd() in case it's not absolute
-    path.resolve(options.path)
-  )
+  this.scope = options.scope
+  // this.scope = ScopedHbsExtractor.readI18nScopeFromJSONFile(
+  //   // resolve relative to process.cwd() in case it's not absolute
+  //   path.resolve(options.path)
+  // )
 
   this.path = options.path // need this for error reporting
 
@@ -60,14 +60,6 @@ JavaScript, like \`import I18n from "i18n!foo.bar"\`):
   }
 
   return new ScopedHbsTranslateCall(sexpr, this.scope);
-};
-
-ScopedHbsExtractor.readI18nScopeFromJSONFile = function(filepath) {
-  const metadataFilepath = `${filepath}.json`
-
-  if (fs.existsSync(metadataFilepath)) {
-    return require(metadataFilepath).i18nScope
-  }
 };
 
 module.exports = ScopedHbsExtractor;

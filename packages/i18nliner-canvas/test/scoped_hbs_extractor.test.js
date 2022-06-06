@@ -23,12 +23,5 @@ const Handlebars = require('handlebars')
 const path = require('path')
 
 describe('ScopedHbsExtractor.readI18nScopeFromJSONFile', () => {
-  it('reads the i18nScope from the accompanying .json file', () => {
-    assert.deepEqual(
-      ScopedHbsExtractor.readI18nScopeFromJSONFile(
-        path.resolve(__dirname, 'fixtures/hbs/app/views/jst/foo/_barBaz.hbs')
-      ),
-      'foo.bar_baz'
-    )
-  })
+
 });

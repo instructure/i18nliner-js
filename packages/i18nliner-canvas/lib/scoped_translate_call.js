@@ -32,6 +32,7 @@ module.exports = function(TranslateCall) {
     // TODO: make i18nliner-js use the latter, just like i18nliner(.rb) ...
     // i18nliner-handlebars can't use the former
     if (!this.inferredKey && !this.options.i18n_inferred_key) {
+      // console.log('assigning scope because key is not inferred', this.key)
       const key = this.key
 
       if (key[0] === '#') {
@@ -46,6 +47,9 @@ module.exports = function(TranslateCall) {
         this.key = this.scope + "." + key;
       }
     }
+    // else {
+      // console.log('not assigning scope because key is inferred:', this.key, this.scope)
+    // }
 
     TranslateCall.prototype.normalize.call(this);
   };

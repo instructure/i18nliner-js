@@ -4,6 +4,7 @@
   "version": "1.0.0",
   "license": "MIT",
   "homepage": "https://github.com/instructure/i18nliner-js",
+  "main": "./lib/index.js",
   "exports": {
     ".": "./lib/index.js"
   },
@@ -23,9 +24,6 @@
   ],
   "publishConfig": {
     "access": "public"
-  },
-  "peerDependencies": {
-    "i18n-js": "^3"
   },
   "devDependencies": {
     "c8": "^7.11.3",

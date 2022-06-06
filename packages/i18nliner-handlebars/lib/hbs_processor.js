@@ -15,8 +15,10 @@ HbsProcessor.prototype.defaultPattern = "**/*.hbs";
 HbsProcessor.prototype.Extractor = Extractor;
 HbsProcessor.prototype.PreProcessor = PreProcessor;
 
-HbsProcessor.prototype.checkContents = function(source, path) {
-  var extractor = new this.Extractor(this.preProcess(source), {path: path});
+HbsProcessor.prototype.checkContents = function(source, path, contexts = {}) {
+  const ast =  this.preProcess(source, contexts.preProcessor)
+  const extractor = new this.Extractor(ast, {path: path, ...contexts.extractor});
+
   extractor.forEach(function(key, value, context) {
     this.translations.set(key, value, context);
     this.translationCount++;
@@ -27,9 +29,9 @@ HbsProcessor.prototype.sourceFor = function(file) {
   return fs.readFileSync(file);
 };
 
-HbsProcessor.prototype.preProcess = function(source) {
+HbsProcessor.prototype.preProcess = function(source, context) {
   var ast = Handlebars.parse(source.toString());
-  this.PreProcessor.process(ast);
+  this.PreProcessor.process(ast, context);
   return ast;
 };
 

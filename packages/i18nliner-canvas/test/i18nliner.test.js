@@ -46,7 +46,7 @@ var subject = function(dir) {
     const command = new PanickyCheck({});
     scanner.scanFilesFromI18nrc(scanner.loadConfigFromDirectory(dir))
     command.run();
-    return command.translations.translations;
+    return command.translations;
   }
   finally {
     if (previousConfig) {
@@ -63,22 +63,24 @@ describe("i18nliner-canvas", function() {
 
   describe("handlebars", function() {
     it("extracts default translations", function() {
-      assert.deepEqual(subject(expand("./fixtures/hbs")), {
+      const { translations, index } = subject(expand("./fixtures/hbs"))
+
+      assert.deepEqual(translations, {
         absolute: {
           key: "Absolute key",
           inline_with_absolute_key: "Inline with absolute key",
         },
-        inferred_key_c49e3743: "Inferred key",
-        inline_with_inferred_key_88e68761: "Inline with inferred key",
         foo: {
           bar_baz: {
             inline_with_relative_key: "Inline with relative key",
-            relative_key: "Relative key"
+            relative_key: "Relative key",
           },
           bar_fizz_buzz: {
             inline_with_relative_key: "Inline with relative key"
-          }
-        }
+          },
+        },
+        inline_with_inferred_key_88e68761: "Inline with inferred key",
+        inferred_key_c49e3743: "Inferred key",
       });
     });
 
@@ -99,7 +101,9 @@ describe("i18nliner-canvas", function() {
 
   describe("javascript", function() {
     it("extracts default translations", function() {
-      assert.deepEqual(subject(expand("./fixtures/js")), {
+      const { translations, index } = subject(expand("./fixtures/js"))
+
+      assert.deepEqual(translations, {
         absolute: {
           key: "Absolute key",
         },
