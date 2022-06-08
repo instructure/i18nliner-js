@@ -79,6 +79,7 @@ describe("i18nliner-canvas", function() {
             inline_with_relative_key: "Inline with relative key"
           },
         },
+        checkbox_label_ab22acdf: 'Checkbox label',
         inline_with_inferred_key_88e68761: "Inline with inferred key",
         inferred_key_c49e3743: "Inferred key",
       });

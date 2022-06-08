@@ -7,7 +7,8 @@
   "exports": {
     ".": "./lib/main.js",
     "./scoped_hbs_extractor": "./lib/scoped_hbs_extractor.js",
-    "./scoped_hbs_pre_processor": "./lib/scoped_hbs_pre_processor.js"
+    "./scoped_hbs_pre_processor": "./lib/scoped_hbs_pre_processor.js",
+    "./scoped_hbs_resolver": "./lib/scoped_hbs_resolver.js"
   },
   "dependencies": {
     "@instructure/i18nliner": "^3.0.0",

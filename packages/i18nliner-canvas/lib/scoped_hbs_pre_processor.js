@@ -24,6 +24,12 @@ var StringNode = AST.StringNode;
 var HashNode = AST.HashNode;
 
 const ScopedHbsPreProcessor = {...PreProcessor}
+const KeyType = {
+  ABSOLUTE: Symbol.for('ScopedHbsPreProcessor.KeyType.ABSOLUTE'),
+  INFERRED: Symbol.for('ScopedHbsPreProcessor.KeyType.INFERRED'),
+  RELATIVE: Symbol.for('ScopedHbsPreProcessor.KeyType.RELATIVE'),
+  UNKNOWN: Symbol.for('ScopedHbsPreProcessor.KeyType.UNKNOWN'),
+}
 
 ScopedHbsPreProcessor.processWithScope = function(scope, ast) {
   this.scope = scope
@@ -50,47 +56,78 @@ ScopedHbsPreProcessor.processStatement = function(statement) {
   statement = PreProcessor.processStatement.call(this, statement) || statement;
   if (statement.type === 'mustache' && statement.id.string === 't')
     return this.injectScope(statement);
+  else if (statement.type === 'sexpr' && statement.id.string === 't')
+    return this.injectScope(statement);
 }
-
-// ScopedHbsPreProcessor.inferKey = function(defaultValue) {
-//   // console.log(this.scope)
-//   // return new StringNode(`${inferKey(defaultValue)}`);
-//   return new StringNode(`${this.scope}.${inferKey(defaultValue)}`);
-// }
 
 ScopedHbsPreProcessor.injectScope = function(node) {
   if (!node.hash) {
-    node.hash = node.sexpr.hash = new HashNode([]);
+    node.hash = new HashNode([]);
+
+    if (node.sexpr) {
+      node.sexpr.hash = node.hash
+    }
   }
 
   const { pairs } = node.hash;
-  const isInferred = pairs.length === 0 || pairs[pairs.length - 1][0] === "i18n_inferred_key"
+  const keyType = classifyKey(node)
 
-  console.log('inferred?', hasInferredKey(node), pairs, require('handlebars').print(node))
-  // if (!hasInferredKey(node)) {
-  //   // console.log('hi im here trying to inject scope')
-  //   node.params[0] = new StringNode(
-  //     `${this.scope}.${node.params[0].original}`
-  //   )
-  // }
+  switch (keyType) {
+    case KeyType.RELATIVE:
+      node.params[0] = new StringNode(`${this.scope}.${node.params[0].string}`)
+      node.hash.pairs = pairs.concat([
+        ["i18n_scope", new StringNode(this.scope)]
+      ]);
+    break;
+
+    case KeyType.ABSOLUTE:
+      node.params[0] = new StringNode(node.params[0].string.slice(1))
+      node.hash.pairs = pairs.concat([
+        ["i18n_scope", new StringNode(node.params[0].string.split('.').slice(0, -1).join('.'))],
+        ["i18n_used_in", new StringNode(this.scope)],
+      ]);
+    break;
 
   // to match our .rb scoping behavior, don't scope inferred keys...
   // if inferred, it's always the last option
-  if (!pairs.length || pairs[pairs.length - 1][0] !== "i18n_inferred_key") {
-  // if (!hasInferredKey(node)) {
-    // console.log(require('handlebars').print(node))
-    node.hash.pairs = pairs.concat([["scope", new StringNode(this.scope)]]);
+    case KeyType.INFERRED:
+      node.hash.pairs = pairs.concat([
+        ["i18n_scope", new StringNode(this.scope)]
+      ]);
+    break;
   }
+
   return node;
 }
 
-function hasInferredKey(node) {
-  return (
+function classifyKey(node) {
+  if (
     node.hash &&
     node.hash.pairs &&
     node.hash.pairs.length > 0 &&
     node.hash.pairs[node.hash.pairs.length - 1][0] === 'i18n_inferred_key'
-  )
+  ) {
+    return KeyType.INFERRED
+  }
+
+  else if (
+    node.params[0] &&
+    node.params[0].type === 'STRING' &&
+    node.params[0].string.startsWith('#')
+  ) {
+    return KeyType.ABSOLUTE
+  }
+  else if (
+    node.params[0] &&
+    node.params[0].type === 'STRING' &&
+    node.params[1] &&
+    node.params[1].type === 'STRING'
+  ) {
+    return KeyType.RELATIVE
+  }
+  else {
+    return KeyType.UNKNOWN
+  }
 }
 
 module.exports = ScopedHbsPreProcessor;

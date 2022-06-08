@@ -65,9 +65,23 @@ describe('ScopedHbsProcessor', () => {
       }
     });
 
-    assert.deepEqual(index, [
+    assert.deepEqual(index[0],
       { key: 'other.thing', scope: 'other', used_in: 'some.scope' }
-    ])
+    )
+  })
+
+  it('processes calls to t() in helpers', () => {
+    const { index, translations } = extract('some.scope', dedent`
+      {{checkbox aria-label=(t 'Something') }}
+    `)
+
+    assert.deepEqual(translations, {
+      'something_2a537172': 'Something'
+    });
+
+    assert.deepEqual(index[0],
+      { key: 'something_2a537172', scope: 'some.scope' }
+    )
   })
 
   it('reads the i18nScope from the accompanying .json file', () => {

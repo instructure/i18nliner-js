@@ -58,3 +58,26 @@ app
 
 A file under `app/a/b/c/` is subject to exclusion according to rules found in
 both `app/.i18nignore` and `app/a/.i18nignore`.
+
+## Handlebars
+
+Allowed forms:
+
+```handlebars
+<!-- inferred keys -->
+{{t "Hello"}}
+{{#t}}
+  Hello
+{{/t}}
+
+<!-- explicit keys -->
+{{t "hello" "Hello"}}
+{{#t "hello"}}
+  Hello
+{{/t}}
+
+<!-- explicit, external scope key -->
+{{#t "#external.hello"}}
+  Hello
+{{/t}}
+```

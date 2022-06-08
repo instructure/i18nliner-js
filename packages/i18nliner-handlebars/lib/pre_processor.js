@@ -102,16 +102,56 @@ var PreProcessor = {
   },
 
   processStatement: function(statement) {
-    if (statement.type !== 'block') return;
+    if (statement.type === 'mustache' && statement.id.string === 't') {
+      return this.transformInline(statement)
+    }
+    else if (statement.type === 'mustache') {
+      return this.process({ statements: [statement.sexpr] });
+    }
+    else if (statement.type === 'block') {
+      // consume anything inside this first (e.g. if we have nested t blocks)
+      this.process(statement.program);
+      if (statement.inverse)
+        this.process(statement.inverse);
 
-    // consume anything inside this first (e.g. if we have nested t blocks)
-    this.process(statement.program);
-    if (statement.inverse)
-      this.process(statement.inverse);
+      if (statement.mustache.id.string !== "t") return;
 
-    if (statement.mustache.id.string !== "t") return;
+      return this.transform(statement);
+    }
+    else if (statement.type === 'sexpr') {
+      const sexpr = statement
 
-    return this.transform(statement);
+      this.processStatement(sexpr.id);
+
+      for (const param of sexpr.params) {
+        this.processStatement(param)
+      }
+
+      if (sexpr.hash) {
+        for (const pair of sexpr.hash.pairs) {
+          this.processStatement(pair[1]);
+        }
+      }
+
+      if (sexpr.id.string === 't') {
+        this.transformInline(sexpr);
+      }
+    }
+  },
+
+  transformInline: function(node) {
+    if (node.params.length === 1 && node.params[0].type === 'STRING' && !node.hash) {
+      const [defaultValue] = node.params
+
+      node.params.unshift(this.inferKey(defaultValue.string))
+
+      this.updateHash(node, [
+        ["i18n_inferred_key", new BooleanNode(true)]
+      ])
+    }
+    else {
+      return node
+    }
   },
 
   transform: function(node) {
@@ -133,8 +173,12 @@ var PreProcessor = {
   updateHash: function(node, hash) {
     if (!hash.length) return;
 
-    if (!node.hash)
-      node.hash = node.sexpr.hash = new HashNode([]);
+    if (!node.hash) {
+      node.hash = new HashNode([]);
+      if (node.sexpr) {
+        node.sexpr.hash = node.hash
+      }
+    }
     var existingKeys = {}
       , len
       , i

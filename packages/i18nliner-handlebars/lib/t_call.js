@@ -1,6 +1,5 @@
 const TranslateCall = require("@instructure/i18nliner/translate_call");
 const {UNSUPPORTED_EXPRESSION} = require('@instructure/i18nliner/errors');
-
 /*
  * hbs-capable version of TranslateCall
  *
@@ -16,6 +15,7 @@ function TCall(sexpr) {
 
 TCall.prototype = Object.create(TranslateCall.prototype);
 TCall.prototype.constructor = TCall;
+TCall.META_KEYS = ['i18n_inferred_key']
 
 TCall.prototype.processArguments = function(sexpr) {
   var args = sexpr.params
@@ -40,8 +40,14 @@ TCall.prototype.processHash = function(pairs) {
   var result = {}
     , len = pairs.length
     , i;
-  for (i = 0; i < len; i++)
-    result[pairs[i][0]] = UNSUPPORTED_EXPRESSION;
+  for (i = 0; i < len; i++) {
+    if (this.constructor.META_KEYS.includes(pairs[i][0])) {
+      result[pairs[i][0]] = pairs[i][1]
+    }
+    else {
+      result[pairs[i][0]] = UNSUPPORTED_EXPRESSION;
+    }
+  }
   return result;
 };
 

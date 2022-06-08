@@ -26,13 +26,6 @@ describe("Extractor", function() {
     );
   });
 
-  it("should not extract t calls with no default", function() {
-    assert.deepEqual(
-      extract("{{t 'foo.foo'}}"),
-      {}
-    );
-  });
-
   it("should extract valid t calls", function() {
     assert.deepEqual(
       extract("{{t 'Foo'}}"),

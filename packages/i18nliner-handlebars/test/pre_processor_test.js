@@ -36,9 +36,23 @@ describe("PreProcessor", function() {
       );
     });
 
+    it("transforms t calls", function() {
+      assert.equal(
+        p('{{t "hello world!"}}'),
+        c('{{t "key" "hello world!" i18n_inferred_key=true}}')
+      );
+    });
+
     it("transforms t block expressions with explicit keys", function(){
       assert.equal(
         p('{{#t "my_key"}}hello world!{{/t}}'),
+        c('{{t "my_key" "hello world!"}}')
+      );
+    });
+
+    it("accepts t calls with explicit keys", function(){
+      assert.equal(
+        p('{{t "my_key" "hello world!"}}'),
         c('{{t "my_key" "hello world!"}}')
       );
     });

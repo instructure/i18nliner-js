@@ -22,39 +22,122 @@ const ScopedHbsPreProcessor = require('../lib/scoped_hbs_pre_processor')
 const Handlebars = require('handlebars')
 
 describe('ScopedHbsPreProcessor', () => {
-  it('calls I18n.t() with full key given an inline, relative key', () => {
-    const ast = parse('some.scope', dedent`
-      {{t 'something' 'Something'}}
-    `)
-
-    console.log(ast)
-    console.log(Handlebars.print(ast))
+  it('expands into scope-qualified key given an inline relative key and a default value', () => {
+    const ast = parseAndPreProcess({
+      scope: 'a',
+      source: dedent`
+        {{t 'something' 'Something'}}
+      `
+    })
 
     assert.equal(
-      Handlebars.print(ast).trim(),
-      `{{ ID:t ["some.scope.something", "Something"] HASH{scope="some.scope"} }}`
+      pp(ast),
+      pp(parse(`
+        {{t "a.something" "Something" i18n_scope="a"}}
+      `))
     )
   })
 
-  it('calls I18n.t() with inferred key given an inline, inferred key', () => {
-    const ast = parse('some.scope', dedent`
-      {{t 'Something'}}
-    `)
+  it('expands into absolute key given an inline absolute key and a default value', () => {
+    const ast = parseAndPreProcess({
+      scope: 'a',
+      source: dedent`
+        {{t '#b.thing' 'Thing of another'}}
+      `
+    })
 
-    assert.equal(
-      Handlebars.print(ast).trim(),
-      `{{ ID:t ["something_a8a2f3d1", "Something"] HASH{scope="some.scope"} }}`
+    assert.deepEqual(
+      pp(ast),
+      pp(parse(`
+        {{t "b.thing" "Thing of another" i18n_scope="b" i18n_used_in="a"}}
+      `))
     )
   })
 
-  it('injects call to I18n.t() with inferred key')
-  it('injects call to I18n.t() with absolute key')
+  it('expands into the inferred key and default value given an inline default value', () => {
+    const ast = parseAndPreProcess({
+      scope: 'a',
+      source: dedent`{{t 'Something'}}`
+    })
+
+    assert.equal(
+      pp(ast),
+      pp(parse(`
+        {{t "something_2a537172" "Something" i18n_inferred_key=true i18n_scope="a"}}
+      `))
+    )
+  })
+
+  it('expands into the inferred key and default value given an anonymous block', () => {
+    const ast = parseAndPreProcess({
+      scope: 'a',
+      source: dedent`
+        {{#t}}Something{{/t}}
+      `
+    })
+
+    assert.deepEqual(
+      pp(ast),
+      pp(parse(`
+        {{t "something_2a537172" "Something" i18n_inferred_key=true i18n_scope="a"}}
+      `))
+    )
+  })
+
+  it('expands into the relative key and default value given a block', () => {
+    const ast = parseAndPreProcess({
+      scope: 'a',
+      source: dedent`
+        {{#t 'something'}}Something{{/t}}
+      `
+    })
+
+    assert.deepEqual(pp(ast), pp(parse(`
+      {{t "a.something" "Something" i18n_scope="a"}}
+    `))
+    )
+  })
+
+  it('expands into the absolute key and default value given a block', () => {
+    const ast = parseAndPreProcess({
+      scope: 'a',
+      source: dedent`
+        {{#t '#b.thing'}}Thing of another{{/t}}
+      `
+    })
+
+    assert.deepEqual(
+      pp(ast),
+      pp(parse(`
+        {{t "b.thing" "Thing of another" i18n_scope="b" i18n_used_in="a" }}
+      `)),
+    )
+  })
+
+  it('extracts from sexpr', () => {
+    const ast = parseAndPreProcess({
+      scope: 'a',
+      source: dedent`
+        {{checkbox aria-label=(t "#b.thing" "Thing of another")}}
+      `
+    })
+
+    assert.deepEqual(
+      pp(ast),
+      pp(parse(`
+        {{checkbox aria-label=(t "b.thing" "Thing of another" i18n_scope="b" i18n_used_in="a") }}
+      `))
+    )
+  })
 });
 
-function parse(scope, source) {
-  const ast = Handlebars.parse(source)
+function parseAndPreProcess({ scope, source }) {
+  const ast = parse(source)
 
   ScopedHbsPreProcessor.processWithScope(scope, ast)
 
   return ast;
 }
+
+const parse =(source, scope) => Handlebars.parse(dedent(source))
+const pp = ast => Handlebars.print(ast).trim()

@@ -17,6 +17,7 @@
  */
 
 const TranslationHash = require('@instructure/i18nliner/translation_hash')
+const ScopedHbsTranslateCall = require('./scoped_hbs_translate_call')
 
 class ScopedTranslationHashAndIndex extends TranslationHash {
   constructor() {
@@ -27,14 +28,29 @@ class ScopedTranslationHashAndIndex extends TranslationHash {
   set(key, value, meta) {
     super.set(key, value, meta);
 
-    const record = { key, scope: meta.scope }
+    let record
 
-    if (meta.absolute) {
-      record.scope = key.split('.')[0]
+    if (meta instanceof ScopedHbsTranslateCall) {
+      record = { key }
+
+      if (meta.options.i18n_scope) {
+        record.scope = meta.options.i18n_scope.string
+      }
+
+      if (meta.options.i18n_used_in) {
+        record.used_in = meta.options.i18n_used_in.string
+      }
     }
+    else {
+      record = { key, scope: meta.scope }
 
-    if (meta.scope !== record.scope) {
-      record.used_in = meta.scope
+      if (meta.absolute) {
+        record.scope = key.split('.').slice(0, -1).join('.')
+      }
+
+      if (meta.scope !== record.scope) {
+        record.used_in = meta.scope
+      }
     }
 
     this.index.push(record)
