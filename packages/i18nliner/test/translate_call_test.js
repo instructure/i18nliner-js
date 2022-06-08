@@ -1,4 +1,3 @@
-/* global describe, it */
 const {assert} = require("chai");
 const TranslateCall = require("@instructure/i18nliner/translate_call");
 const Errors = require("@instructure/i18nliner/errors");
@@ -7,7 +6,6 @@ const {UNSUPPORTED_EXPRESSION} = Errors;
 
 describe("TranslateCall", function() {
   const configureRuntimeOnce = configureRuntimeAndReset()
-  // const configureOnce = configureAndReset()
 
   function call() {
     return new TranslateCall(null, 't', [].slice.call(arguments));

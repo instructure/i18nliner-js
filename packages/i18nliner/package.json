@@ -12,9 +12,9 @@
     "./commands": "./lib/commands.js",
     "./config": "./lib/config.js",
     "./errors": "./lib/errors.js",
-    "./i18n_js_extractor": "./lib/processors/js_processor/i18n_js_extractor.js",
+    "./i18n_js_extractor": "./lib/extractors/i18n_js_extractor.js",
     "./js_processor": "./lib/processors/js_processor.js",
-    "./translate_call": "./lib/processors/js_processor/translate_call.js",
+    "./translate_call": "./lib/translate_call.js",
     "./translation_hash": "./lib/translation_hash.js"
   },
   "imports": {

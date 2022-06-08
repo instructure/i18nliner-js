@@ -1,7 +1,7 @@
 const AbstractProcessor = require("./abstract_processor");
-const extract = require("./js_processor/i18n_js_extractor");
+const extract = require("../extractors/i18n_js_extractor");
 const fs = require("fs");
-const TranslateCall = require("./js_processor/translate_call");
+const TranslateCall = require("../translate_call");
 const {parse} = require("@babel/parser");
 const {config} = require('../config');
 
