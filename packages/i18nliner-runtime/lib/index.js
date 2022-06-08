@@ -17,8 +17,8 @@ const config = {
   */
   inferredKeyFormat: 'underscored_crc32',
   underscoredKeyLength: 50,
-  inferKey: inferKey,
-  normalizeDefault: normalizeDefault,
+  inferKey: keyifyDefaultValue,
+  normalizeDefault: pluralizeSingleWord,
   normalizeKey: identity,
 }
 
@@ -26,8 +26,8 @@ exports.ALLOWED_PLURALIZATION_KEYS = ALLOWED_PLURALIZATION_KEYS
 exports.REQUIRED_PLURALIZATION_KEYS = REQUIRED_PLURALIZATION_KEYS
 exports.configure = configure;
 exports.inferArguments = inferArguments;
-exports.inferKey = inferKey;
-exports.normalizeDefault = normalizeDefault;
+exports.inferKey = keyifyDefaultValue;
+exports.normalizeDefault = pluralizeSingleWord;
 exports.extend = extend
 exports.isValidDefault = isValidDefault
 
@@ -157,7 +157,7 @@ function inferArguments(args, meta) {
   return args;
 }
 
-function inferKey(defaultValue, translateOptions) {
+function keyifyDefaultValue(defaultValue, translateOptions) {
   const {normalizeDefault} = config;
 
   if (isValidDefault(!!defaultValue, translateOptions)) {
@@ -204,7 +204,7 @@ function isValidDefault(allowBlank, defaultValue) {
   );
 }
 
-function normalizeDefault(defaultValue, translateOptions) {
+function pluralizeSingleWord(defaultValue, translateOptions) {
   if (typeof defaultValue === 'string' && defaultValue.match(/^[\w-]+$/) && translateOptions && ("count" in translateOptions)) {
     return {one: "1 " + defaultValue, other: "%{count} " + pluralize(defaultValue)};
   }

@@ -17,7 +17,6 @@
  */
 
 var PreProcessor = require("@instructure/i18nliner-handlebars/hbs_pre_processor");
-var { inferKey } = require('@instructure/i18nliner-runtime');
 var Handlebars = require("handlebars");
 var AST = Handlebars.AST;
 var StringNode = AST.StringNode;

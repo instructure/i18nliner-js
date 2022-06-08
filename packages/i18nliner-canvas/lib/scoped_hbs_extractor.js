@@ -17,9 +17,7 @@
  */
 
 const HbsExtractor = require('@instructure/i18nliner-handlebars/hbs_extractor');
-const HbsTranslateCall = require('@instructure/i18nliner-handlebars/hbs_translate_call');
 const ScopedHbsTranslateCall = require("./scoped_hbs_translate_call");
-const path = require('path')
 
 function ScopedHbsExtractor(ast, { scope, path }) {
   this.scope = scope
@@ -33,6 +31,7 @@ ScopedHbsExtractor.prototype.constructor = ScopedHbsExtractor;
 
 ScopedHbsExtractor.prototype.buildTranslateCall = function(sexpr) {
   if (!this.scope) {
+    const path = require('path')
     const friendlyFile = path.relative(process.cwd(), this.path)
 
     throw new Error(`
