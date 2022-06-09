@@ -79,9 +79,6 @@ function extend(I18n, partialConfig) {
     return needsEscaping ? new HtmlSafeString(message) : message;
   };
 
-  // I18n.CallHelpers = CallHelpers;
-  // I18n.Utils = Utils;
-
   I18n.translateWithoutI18nliner = I18n.translate;
   I18n.translate = function() {
     const {normalizeDefault, normalizeKey} = config;

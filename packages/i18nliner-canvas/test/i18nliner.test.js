@@ -63,7 +63,7 @@ describe("i18nliner-canvas", function() {
 
   describe("handlebars", function() {
     it("extracts default translations", function() {
-      const { translations, index } = subject(expand("./fixtures/hbs"))
+      const { translations } = subject(expand("./fixtures/hbs"))
 
       assert.deepEqual(translations, {
         absolute: {
@@ -85,6 +85,47 @@ describe("i18nliner-canvas", function() {
       });
     });
 
+    it("generates an index of the translations", function() {
+      const { index } = subject(expand("./fixtures/hbs"))
+
+      assert.deepEqual(index, [
+        {
+          "key": "absolute.key",
+          "scope": "absolute",
+          "used_in": "foo.bar_baz"
+        },
+        {
+          "key": "foo.bar_baz.relative_key",
+          "scope": "foo.bar_baz"
+        },
+        {
+          "key": "inferred_key_c49e3743",
+          "scope": "foo.bar_baz"
+        },
+        {
+          "key": "absolute.inline_with_absolute_key",
+          "scope": "absolute",
+          "used_in": "foo.bar_baz"
+        },
+        {
+          "key": "foo.bar_baz.inline_with_relative_key",
+          "scope": "foo.bar_baz"
+        },
+        {
+          "key": "inline_with_inferred_key_88e68761",
+          "scope": "foo.bar_baz"
+        },
+        {
+          "key": "checkbox_label_ab22acdf",
+          "scope": "foo.bar_baz"
+        },
+        {
+          "key": "foo.bar_fizz_buzz.inline_with_relative_key",
+          "scope": "foo.bar_fizz_buzz"
+        }
+      ]);
+    });
+
     it('throws if no scope was specified', () => {
       const command = new PanickyCheck({});
 
@@ -102,7 +143,7 @@ describe("i18nliner-canvas", function() {
 
   describe("javascript", function() {
     it("extracts default translations", function() {
-      const { translations, index } = subject(expand("./fixtures/js"))
+      const { translations } = subject(expand("./fixtures/js"))
 
       assert.deepEqual(translations, {
         absolute: {
@@ -125,5 +166,45 @@ describe("i18nliner-canvas", function() {
         yay_typescript_2a26bb91: 'yay typescript'
       });
     });
+
+    it('generates an index of the translations', () => {
+      const { index } = subject(expand("./fixtures/js"))
+
+      assert.deepEqual(index, [
+        {
+          "key": "yay_coffee_d4d65736",
+          "scope": "coffee"
+        },
+        {
+          "key": "esm.my_key",
+          "scope": "esm"
+        },
+        {
+          "key": "absolute.key",
+          "scope": "absolute",
+          "used_in": "esm"
+        },
+        {
+          "key": "inferred_key_c49e3743",
+          "scope": "esm"
+        },
+        {
+          "key": "esm.nested.relative_key",
+          "scope": "esm"
+        },
+        {
+          "key": "foo.relative_key",
+          "scope": "foo"
+        },
+        {
+          "key": "bar.relative_key",
+          "scope": "bar"
+        },
+        {
+          "key": "yay_typescript_2a26bb91",
+          "scope": "ts"
+        }
+      ]);
+    })
   });
 });

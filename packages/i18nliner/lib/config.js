@@ -20,6 +20,8 @@ const defaults = {
   babylonPlugins: ["jsx", "classProperties", "objectRestSpread"],
 
   processors: {},
+
+  plugins: [],
 };
 
 const config = {...defaults};
