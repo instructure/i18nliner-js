@@ -95,6 +95,11 @@ describe("i18nliner-canvas", function() {
           "used_in": "foo.bar_baz"
         },
         {
+          "key": "absolute.predefined",
+          "scope": "absolute",
+          "used_in": "foo.bar_baz"
+        },
+        {
           "key": "foo.bar_baz.relative_key",
           "scope": "foo.bar_baz"
         },
@@ -181,6 +186,11 @@ describe("i18nliner-canvas", function() {
         },
         {
           "key": "absolute.key",
+          "scope": "absolute",
+          "used_in": "esm"
+        },
+        {
+          "key": "absolute.predefined",
           "scope": "absolute",
           "used_in": "esm"
         },

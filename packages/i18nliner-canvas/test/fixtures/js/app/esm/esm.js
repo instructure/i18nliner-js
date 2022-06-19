@@ -22,6 +22,7 @@ const I18n = useScope('esm')
 
 I18n.t('my_key', 'Hello world')
 I18n.t("#absolute.key", "Absolute key");
+I18n.t("#absolute.predefined");
 I18n.t("Inferred key");
 I18n.t("nested.relative_key", "Relative key in nested scope");
 

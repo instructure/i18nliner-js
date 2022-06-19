@@ -16,19 +16,27 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 const {UnscopedAbsoluteKey} = require('./errors')
+const TranslateCall = require("@instructure/i18nliner/translate_call");
 
-module.exports = function(TranslateCall) {
-  var ScopedTranslateCall = function() {
-    var args = [].slice.call(arguments);
-    this.scope = args.pop();
+class ScopedTranslateCall extends TranslateCall {
+  static INDEX_ONLY = Symbol.for('i18nliner-canvas/INDEX_ONLY');
 
-    TranslateCall.apply(this, arguments);
+  constructor(line, method, args, scope) {
+    super(line, method, args, TranslateCall.SKIP_INIT)
+    this.scope = scope
+    super.initialize(args)
   }
 
-  ScopedTranslateCall.prototype = Object.create(TranslateCall.prototype);
-  ScopedTranslateCall.prototype.constructor = ScopedTranslateCall;
+  translations() {
+    if (!this.defaultValue) {
+      return [[this.key, ScopedTranslateCall.INDEX_ONLY]]
+    }
+    else {
+      return super.translations()
+    }
+  }
 
-  ScopedTranslateCall.prototype.normalize = function() {
+  normalize() {
     // console.log(this.options)
     // TODO: make i18nliner-js use the latter, just like i18nliner(.rb) ...
     // i18nliner-handlebars can't use the former
@@ -52,8 +60,8 @@ module.exports = function(TranslateCall) {
       // console.log('not assigning scope because key is inferred:', this.key, this.scope)
     // }
 
-    TranslateCall.prototype.normalize.call(this);
-  };
-
-  return ScopedTranslateCall;
+    super.normalize();
+  }
 }
+
+module.exports = ScopedTranslateCall

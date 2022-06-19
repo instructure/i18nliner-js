@@ -7,10 +7,18 @@ const {
   isValidDefault,
 } = require('@instructure/i18nliner-runtime')
 
-function TranslateCall(line, method, args) {
+const SKIP_INIT = Symbol.for('i18nliner/SKIP_INIT')
+
+function TranslateCall(line, method, args, state) {
   this.line = line;
   this.method = method;
 
+  if (state !== SKIP_INIT) {
+    this.initialize(args)
+  }
+}
+
+TranslateCall.prototype.initialize = function(args) {
   this.normalizeArguments(args);
 
   this.validate();
@@ -129,6 +137,7 @@ TranslateCall.prototype.validateOptions = function() {
 };
 
 module.exports = TranslateCall;
+module.exports.SKIP_INIT = SKIP_INIT;
 
 function difference(a1, a2) {
   var result = [];

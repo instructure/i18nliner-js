@@ -22,6 +22,17 @@ class ScopedHbsTranslateCall extends HbsTranslateCall {
     'i18n_scope',
     'i18n_used_in',
   ]);
+
+  static INDEX_ONLY = Symbol.for('i18nliner-canvas/INDEX_ONLY');
+
+  translations() {
+    if (!this.defaultValue) {
+      return [[this.key, ScopedHbsTranslateCall.INDEX_ONLY]]
+    }
+    else {
+      return super.translations()
+    }
+  }
 }
 
 module.exports = ScopedHbsTranslateCall

@@ -18,15 +18,12 @@
 
 const babylon = require("@babel/parser");
 const CoffeeScript = require("coffee-script");
-const createScopedTranslateCall = require("./scoped_translate_call")
+const ScopedTranslateCall = require("./scoped_translate_call")
 const Errors = require("./errors");
 const extract = require('./scoped_esm_extractor')
 const fs = require('fs');
 const JsProcessor = require("@instructure/i18nliner/js_processor");
-const TranslateCall = require("@instructure/i18nliner/translate_call");
 const {CANVAS_I18N_RECEIVER} = require('./params')
-
-const ScopedTranslateCall = createScopedTranslateCall(TranslateCall);
 
 class ScopedEsmProcessor extends JsProcessor {
   static names = ['js', 'esm'];
