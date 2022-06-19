@@ -2,7 +2,7 @@
   "name": "@instructure/i18nliner-canvas",
   "description": "i18nliner, canvas style",
   "main": "./lib/main",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "license": "AGPL-3.0",
   "exports": {
     ".": "./lib/main.js",
@@ -11,7 +11,7 @@
     "./scoped_hbs_resolver": "./lib/scoped_hbs_resolver.js"
   },
   "dependencies": {
-    "@instructure/i18nliner": "^3.0.0",
+    "@instructure/i18nliner": "^3.0.1",
     "@instructure/i18nliner-handlebars": "^2.0.0",
     "@instructure/i18nliner-runtime": "^1",
     "ember-template-compiler": "1.8.0",
