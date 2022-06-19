@@ -16,6 +16,7 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 const HbsTranslateCall = require('@instructure/i18nliner-handlebars/hbs_translate_call');
+const { INDEX_ONLY } = require('./scoped_translate_call')
 
 class ScopedHbsTranslateCall extends HbsTranslateCall {
   static META_KEYS = HbsTranslateCall.META_KEYS.concat([
@@ -23,11 +24,9 @@ class ScopedHbsTranslateCall extends HbsTranslateCall {
     'i18n_used_in',
   ]);
 
-  static INDEX_ONLY = Symbol.for('i18nliner-canvas/INDEX_ONLY');
-
   translations() {
     if (!this.defaultValue) {
-      return [[this.key, ScopedHbsTranslateCall.INDEX_ONLY]]
+      return [[this.key, INDEX_ONLY]]
     }
     else {
       return super.translations()

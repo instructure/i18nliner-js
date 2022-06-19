@@ -19,15 +19,17 @@
 const TranslationHash = require('@instructure/i18nliner/translation_hash')
 const ScopedHbsTranslateCall = require('./scoped_hbs_translate_call')
 const ScopedTranslateCall = require('./scoped_translate_call')
+const { INDEX_ONLY } = ScopedTranslateCall
 
 class ScopedTranslationHashAndIndex extends TranslationHash {
   constructor() {
     super()
     this.index = []
+    this.seen = {}
   }
 
   set(key, value, meta) {
-    if (value !== ScopedTranslateCall.INDEX_ONLY) {
+    if (value !== INDEX_ONLY) {
       super.set(key, value, meta);
     }
 
@@ -60,7 +62,12 @@ class ScopedTranslationHashAndIndex extends TranslationHash {
       }
     }
 
-    this.index.push(record)
+    const id = `${record.key}:${record.scope}:${record.used_in}`
+
+    if (!this.seen[id]) {
+      this.seen[id] = true
+      this.index.push(record)
+    }
   }
 
   toJSON() {

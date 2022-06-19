@@ -57,6 +57,17 @@ describe("ScopedTranslationHashAndIndex", function() {
 
     assert.notInclude(Object.keys(phrase), 'used_in')
   })
+
+  it('does not dupe records', () => {
+    const phrases = subject(`
+      import { useScope } from '@canvas/i18n'
+      const I18n = useScope('foo')
+      I18n.t('hello_world', 'Hello World!')
+      I18n.t('hello_world', 'Hello World!')
+    `)
+
+    assert.equal(phrases.length, 1)
+  })
 });
 
 const subject = (source) => {
