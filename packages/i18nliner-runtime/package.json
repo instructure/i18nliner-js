@@ -1,7 +1,7 @@
 {
   "name": "@instructure/i18nliner-runtime",
   "description": "i18nliner extensions for i18n-js",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "license": "MIT",
   "homepage": "https://github.com/instructure/i18nliner-js",
   "main": "./lib/index.js",

@@ -149,6 +149,11 @@ describe('I18n.interpolate', () => {
       var result = I18n.translate("ohai *click here*", {wrapper: '<a href="%{url}">$1</a>', url: "about:blank"});
       assert.equal(result, 'ohai <a href="about:blank">click here</a>');
     });
+
+    it("should allow escaping asterisks and backslashes", function() {
+      var result = I18n.translate("Hello \\\\*b\\*b*.", {wrapper: '<b>$1</b>'})
+      assert.equal(result.value, 'Hello \\<b>b*b</b>.')
+    });
   });
 })
 

@@ -218,6 +218,8 @@ function applyWrappers(string, wrappers) {
   var keys;
   if (typeof wrappers === 'string')
     wrappers = [wrappers];
+  string = string.replaceAll("\\\\", String.fromCharCode(26))
+  string = string.replaceAll("\\*", String.fromCharCode(27))
   if (wrappers instanceof Array) {
     for (i = wrappers.length; i; i--)
       string = applyWrapper(string, new Array(i + 1).join("*"), wrappers[i - 1]);
@@ -228,6 +230,8 @@ function applyWrappers(string, wrappers) {
     for (i = 0, len = keys.length; i < len; i++)
       string = applyWrapper(string, keys[i], wrappers[keys[i]]);
   }
+  string = string.replaceAll(String.fromCharCode(27), '*')
+  string = string.replaceAll(String.fromCharCode(26), "\\")
   return string;
 }
 
