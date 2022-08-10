@@ -49,15 +49,15 @@ function extend(I18n, partialConfig) {
     var i;
     var wrappers = options.wrappers || options.wrapper;
 
-    message = message.replace(/\\\\/g, String.fromCharCode(26))
-    message = message.replace(/\\\*/g, String.fromCharCode(27))
+    message = message.replace(/\\\\/g, String.fromCharCode(0xE124))
+    message = message.replace(/\\\*/g, String.fromCharCode(0xE123))
     if (wrappers) {
       needsEscaping = true;
       message = htmlEscape(message, HtmlSafeString);
       message = applyWrappers(message, wrappers);
     }
-    message = message.replace(new RegExp(String.fromCharCode(27), 'g'), '*')
-    message = message.replace(new RegExp(String.fromCharCode(26), 'g'), "\\")
+    message = message.replace(new RegExp(String.fromCharCode(0xE123), 'g'), '*')
+    message = message.replace(new RegExp(String.fromCharCode(0xE124), 'g'), "\\")
 
     for (i = 0; i < len; i++) {
       match = matches[i];
