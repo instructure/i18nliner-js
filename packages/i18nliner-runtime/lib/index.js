@@ -49,11 +49,15 @@ function extend(I18n, partialConfig) {
     var i;
     var wrappers = options.wrappers || options.wrapper;
 
+    message = message.replace(/\\\\/g, String.fromCharCode(26))
+    message = message.replace(/\\\*/g, String.fromCharCode(27))
     if (wrappers) {
       needsEscaping = true;
       message = htmlEscape(message, HtmlSafeString);
       message = applyWrappers(message, wrappers);
     }
+    message = message.replace(new RegExp(String.fromCharCode(27), 'g'), '*')
+    message = message.replace(new RegExp(String.fromCharCode(26), 'g'), "\\")
 
     for (i = 0; i < len; i++) {
       match = matches[i];
@@ -218,8 +222,6 @@ function applyWrappers(string, wrappers) {
   var keys;
   if (typeof wrappers === 'string')
     wrappers = [wrappers];
-  string = string.replace(/\\\\/g, String.fromCharCode(26))
-  string = string.replace(/\\\*/g, String.fromCharCode(27))
   if (wrappers instanceof Array) {
     for (i = wrappers.length; i; i--)
       string = applyWrapper(string, new Array(i + 1).join("*"), wrappers[i - 1]);
@@ -230,8 +232,6 @@ function applyWrappers(string, wrappers) {
     for (i = 0, len = keys.length; i < len; i++)
       string = applyWrapper(string, keys[i], wrappers[keys[i]]);
   }
-  string = string.replace(new RegExp(String.fromCharCode(27), 'g'), '*')
-  string = string.replace(new RegExp(String.fromCharCode(26), 'g'), "\\")
   return string;
 }
 
