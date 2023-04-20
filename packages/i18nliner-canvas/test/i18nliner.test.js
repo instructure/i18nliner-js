@@ -167,7 +167,6 @@ describe("i18nliner-canvas", function() {
         bar: {
           relative_key: "Another relative key"
         },
-        yay_coffee_d4d65736: 'yay coffee',
         yay_typescript_2a26bb91: 'yay typescript'
       });
     });
@@ -176,10 +175,6 @@ describe("i18nliner-canvas", function() {
       const { index } = subject(expand("./fixtures/js"))
 
       assert.deepEqual(index, [
-        {
-          "key": "yay_coffee_d4d65736",
-          "scope": "coffee"
-        },
         {
           "key": "esm.my_key",
           "scope": "esm"
