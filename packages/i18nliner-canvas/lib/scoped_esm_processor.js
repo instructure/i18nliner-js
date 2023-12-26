@@ -17,7 +17,6 @@
  */
 
 const babylon = require("@babel/parser");
-const CoffeeScript = require("coffee-script");
 const ScopedTranslateCall = require("./scoped_translate_call")
 const Errors = require("./errors");
 const extract = require('./scoped_esm_extractor')
@@ -59,12 +58,7 @@ class ScopedEsmProcessor extends JsProcessor {
       return null
     }
 
-    if (file.match(/\.coffee$/)) {
-      return this.parse(CoffeeScript.compile(source, {}))
-    }
-    else {
-      return this.parse(source)
-    }
+    return this.parse(source)
   }
 
   parse(source) {
