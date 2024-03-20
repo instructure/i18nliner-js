@@ -1,6 +1,20 @@
 #!/usr/bin/env node
 
-var minimist = require('minimist');
-var argv = require('minimist')(process.argv.slice(2));
-var success = require('../dist/lib/main').default.Commands.run(argv._[0], argv);
-process.exit(success ? 0 : 1);
+const argv = require('minimist')(process.argv.slice(2));
+const Commands = require('../lib/commands')
+const {loadConfig} = require('../lib/config')
+
+loadConfig()
+
+switch (argv._[0]) {
+  case 'check':
+    (new Commands.Check(argv)).run() || (process.exitCode = 1);
+    break;
+  case 'export':
+    (new Commands.Export(argv)).run() || (process.exitCode = 1);
+    break;
+  default:
+    console.error(`invalid command: ${argv._[0]}`)
+    process.exit(1)
+}
+

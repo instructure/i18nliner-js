@@ -11,7 +11,7 @@ function JsProcessor(translations, options) {
 
 JsProcessor.prototype = Object.create(AbstractProcessor.prototype);
 JsProcessor.prototype.constructor = JsProcessor;
-JsProcessor.prototype.defaultPattern = "**/*.js";
+JsProcessor.prototype.defaultPattern = ["**/*.js", "**/*.jsx"];
 
 JsProcessor.prototype.checkContents = function(source) {
   var fileData = this.preProcess(source);
