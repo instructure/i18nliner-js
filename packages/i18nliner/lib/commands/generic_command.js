@@ -5,8 +5,12 @@ function GenericCommand(options) {
   }
 }
 
-GenericCommand.prototype.print = function(string) {
-  process.stdout.write(string);
+GenericCommand.prototype.print = function(string, level) {
+  if(level === 'error') {
+    process.stderr.write(string);
+  } else {
+    process.stdout.write(string);
+  }
 };
 
 module.exports = GenericCommand;
