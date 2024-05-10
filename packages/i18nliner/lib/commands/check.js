@@ -89,7 +89,7 @@ Check.prototype.printSummary = function() {
     this.print("\n\n");
 
     for (const error of errors) {
-      this.print(red(error) + "\n");
+      this.print(red(error) + "\n", 'error');
     }
 
     this.print("\n");
