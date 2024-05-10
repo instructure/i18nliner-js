@@ -22,6 +22,8 @@ const defaults = {
   processors: {},
 
   plugins: [],
+
+  include: [],
 };
 
 const config = {...defaults};
