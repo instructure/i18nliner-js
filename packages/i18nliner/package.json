@@ -1,7 +1,7 @@
 {
   "name": "@instructure/i18nliner",
   "description": "i18n made simple",
-  "version": "3.1.1",
+  "version": "3.1.2",
   "license": "MIT",
   "homepage": "https://github.com/instructure/i18nliner-js",
   "bin": {
@@ -40,7 +40,7 @@
     "@babel/parser": "^7",
     "@babel/traverse": "^7",
     "@instructure/i18nliner-runtime": "^1",
-    "cli-color": "^1",
+    "cli-color": "^2",
     "gglobby": "0.0.3",
     "minimist": "~1.2.0",
     "mkdirp": "~0.5.1"
