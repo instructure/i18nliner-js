@@ -1,9 +1,17 @@
 /* global window */
 
-const Handlebars = require("handlebars");
 const { JSDOM } = require("jsdom");
 const { inferKey } = require('@instructure/i18nliner-runtime');
 const Errors = require("./errors");
+const {
+  pathString,
+  stringNode,
+  booleanNode,
+  pathNode,
+  hashNode,
+  hashPair,
+  subExpr
+} = require("./ast_nodes");
 
 var dom = (function(){
   if (typeof window !== 'undefined') {
@@ -13,14 +21,20 @@ var dom = (function(){
   }
 })();
 
-var AST = Handlebars.AST
-  , StringNode = AST.StringNode
-  , BooleanNode = AST.BooleanNode
-  , HashNode = AST.HashNode
-  , SexprNode = AST.SexprNode
-  , IdNode = AST.IdNode
-  , slice = [].slice
+var slice = [].slice
   , TEMP_PLACEHOLDER = /__i18nliner_\d+__/g;
+
+function firstLineOf(node) {
+  return node.loc?.start?.line;
+}
+
+function safeNode(node) {
+  return subExpr(pathNode('__i18nliner_safe'), [node]);
+}
+
+function escapeNode(node) {
+  return subExpr(pathNode('__i18nliner_escape'), [node]);
+}
 
 function TempPlaceholderMap() {
   this._map = {};
@@ -53,44 +67,24 @@ function splitCapture(pattern, string) {
   return result;
 }
 
-function stringNode(string) {
-  return new StringNode(string);
-}
-
-function safeNode(sexpr) {
-  var parts = [
-    new IdNode([{part: '__i18nliner_safe'}]),
-    sexpr
-  ];
-  return new SexprNode(parts);
-}
-
-function escapeNode(sexpr) {
-  var parts = [
-    new IdNode([{part: '__i18nliner_escape'}]),
-    sexpr
-  ];
-  return new SexprNode(parts);
-}
-
 function concatNode(string, tempMap) {
   var parts = splitCapture(TEMP_PLACEHOLDER, string)
     , partsLen = parts.length
+    , params = []
     , part
     , i;
   for (i = 0; i < partsLen; i++) {
     part = parts[i];
-    parts[i] = part.match(TEMP_PLACEHOLDER) ?
+    params.push(part.match(TEMP_PLACEHOLDER) ?
       escapeNode(tempMap.get(part)) :
-      stringNode(part);
+      stringNode(part));
   }
-  parts.unshift(new IdNode([{part: '__i18nliner_concat'}]));
-  return new SexprNode(parts);
+  return subExpr(pathNode('__i18nliner_concat'), params);
 }
 
 var PreProcessor = {
   process: function(ast) {
-    var statements = ast.statements
+    var statements = ast.body
       , statementsLen = statements.length
       , statement
       , i;
@@ -102,51 +96,54 @@ var PreProcessor = {
   },
 
   processStatement: function(statement) {
-    if (statement.type === 'mustache' && statement.id.string === 't') {
-      return this.transformInline(statement)
+    if (!statement) return;
+
+    if (statement.type === 'MustacheStatement' && pathString(statement.path) === 't') {
+      return this.transformInline(statement);
     }
-    else if (statement.type === 'mustache') {
-      return this.process({ statements: [statement.sexpr] });
+    else if (statement.type === 'MustacheStatement') {
+      this.processExpressionChildren(statement);
     }
-    else if (statement.type === 'block') {
+    else if (statement.type === 'BlockStatement') {
       // consume anything inside this first (e.g. if we have nested t blocks)
       this.process(statement.program);
       if (statement.inverse)
         this.process(statement.inverse);
 
-      if (statement.mustache.id.string !== "t") return;
+      if (pathString(statement.path) !== "t") return;
 
       return this.transform(statement);
     }
-    else if (statement.type === 'sexpr') {
-      const sexpr = statement
+    else if (statement.type === 'SubExpression') {
+      this.processExpressionChildren(statement);
 
-      this.processStatement(sexpr.id);
-
-      for (const param of sexpr.params) {
-        this.processStatement(param)
+      if (pathString(statement.path) === 't') {
+        this.transformInline(statement);
       }
+    }
+  },
 
-      if (sexpr.hash) {
-        for (const pair of sexpr.hash.pairs) {
-          this.processStatement(pair[1]);
-        }
-      }
-
-      if (sexpr.id.string === 't') {
-        this.transformInline(sexpr);
+  processExpressionChildren: function(node) {
+    var params = node.params || []
+      , i;
+    for (i = 0; i < params.length; i++) {
+      this.processStatement(params[i]);
+    }
+    if (node.hash) {
+      for (i = 0; i < node.hash.pairs.length; i++) {
+        this.processStatement(node.hash.pairs[i].value);
       }
     }
   },
 
   transformInline: function(node) {
-    if (node.params.length === 1 && node.params[0].type === 'STRING' && !node.hash) {
+    if (node.params.length === 1 && node.params[0].type === 'StringLiteral' && !node.hash) {
       const [defaultValue] = node.params
 
-      node.params.unshift(this.inferKey(defaultValue.string))
+      node.params.unshift(this.inferKey(defaultValue.value))
 
       this.updateHash(node, [
-        ["i18n_inferred_key", new BooleanNode(true)]
+        ["i18n_inferred_key", booleanNode(true)]
       ])
     }
     else {
@@ -155,29 +152,32 @@ var PreProcessor = {
   },
 
   transform: function(node) {
-    var parts = this.inferParts(node.program.statements)
+    var parts = this.inferParts(node.program.body)
       , defaultValue = parts.defaultValue
-      , hash = parts.hash;
-    node = node.mustache;
-    if (!node.params.length) {
-      node.params.push(this.inferKey(defaultValue));
-      hash.push(["i18n_inferred_key", new BooleanNode(true)]);
+      , hash = parts.hash
+      , mustache = {
+          type: 'MustacheStatement',
+          path: node.path,
+          params: node.params,
+          hash: node.hash,
+          escaped: true,
+          strip: { open: false, close: false },
+          loc: node.loc
+        };
+    if (!mustache.params.length) {
+      mustache.params.push(this.inferKey(defaultValue));
+      hash.push(["i18n_inferred_key", booleanNode(true)]);
     }
-    node.params.push(new StringNode(defaultValue));
-    node.isHelper = 1;
-    node.sexpr.isHelper = 1;
-    this.updateHash(node, hash);
-    return node;
+    mustache.params.push(stringNode(defaultValue));
+    this.updateHash(mustache, hash);
+    return mustache;
   },
 
-  updateHash: function(node, hash) {
-    if (!hash.length) return;
+  updateHash: function(node, additions) {
+    if (!additions.length) return;
 
     if (!node.hash) {
-      node.hash = new HashNode([]);
-      if (node.sexpr) {
-        node.sexpr.hash = node.hash
-      }
+      node.hash = hashNode([]);
     }
     var existingKeys = {}
       , len
@@ -185,43 +185,14 @@ var PreProcessor = {
       , pairs;
     pairs = node.hash.pairs;
     for (i = 0, len = pairs.length; i < len; i++)
-      existingKeys[pairs[i][0]] = true;
-    for (i = 0, len = hash.length; i < len; i++)
-      if (!existingKeys[hash[i][0]])
-        pairs.push(hash[i]);
-    if (Handlebars.VERSION < "2.0")
-      this.applySubExpressionHack(node);
-  },
-
-  /*
-   * handlebars 1.3 doesn't correctly handle 2+ subexpressions
-   * within an options hash. additionally an earlier multi-level
-   * path in the hash will stomp a later sub-expression. so we
-   * work around what we can and raise an error for things we
-   * can't
-   *
-   * https://github.com/wycats/handlebars.js/issues/748
-   * https://github.com/wycats/handlebars.js/issues/767
-   */
-  applySubExpressionHack: function(node) {
-    node.hash.pairs = node.hash.pairs.sort(function(a,b) {
-      if (a[1].type === b[1].type) {
-        return 0
-      }
-      else if (a[1].type === 'sexpr') {
-        return -1;
-      }
-      else if (b[1].type === 'sexpr') {
-        return 1;
-      }
-    });
-    var pairs = node.hash.pairs;
-    if (pairs.length > 1 && pairs[1][1].type === "sexpr")
-      throw new Errors.MultipleSubExpressionsError(node.firstLine, "Handlebars 1.3 doesn't support multiple sub-expressions in the options hash");
+      existingKeys[pairs[i].key] = true;
+    for (i = 0, len = additions.length; i < len; i++)
+      if (!existingKeys[additions[i][0]])
+        pairs.push(hashPair(additions[i][0], additions[i][1]));
   },
 
   inferKey: function(defaultValue) {
-    return new StringNode(inferKey(defaultValue));
+    return stringNode(inferKey(defaultValue));
   },
 
   inferParts: function(statements) {
@@ -239,14 +210,14 @@ var PreProcessor = {
   stringForStatement: function(statement, tempMap) {
     var node;
     switch (statement.type) {
-      case 'block':
-        throw new Errors.TBlockNestingError(statement.firstLine, "can't nest block expressions inside a t block");
-      case 'content':
-        return statement.string;
-      case 'mustache':
-        node = statement.sexpr;
-        if (!node.isHelper) node = node.id;
-        delete node.isRoot;
+      case 'BlockStatement':
+        throw new Errors.TBlockNestingError(firstLineOf(statement), "can't nest block expressions inside a t block");
+      case 'ContentStatement':
+        return statement.value;
+      case 'MustacheStatement':
+        node = (statement.params.length || statement.hash) ?
+          subExpr(statement.path, statement.params, statement.hash) :
+          statement.path;
         if (!statement.escaped)
           node = safeNode(node);
         return tempMap.add(node);
@@ -308,26 +279,31 @@ var PreProcessor = {
     return key;
   },
 
-  stringParts: function(sexpr, result) {
+  stringParts: function(node, result) {
     var i
       , len
       , items;
     result = result || [];
-    if (sexpr.type === 'sexpr') {
-      this.stringParts(sexpr.id, result);
-      items = sexpr.params;
+    if (node.type === 'SubExpression') {
+      this.stringParts(node.path, result);
+      items = node.params;
       for (i = 0, len = items.length; i < len; i++) {
         this.stringParts(items[i], result);
       }
-      if (sexpr.hash) {
-        items = sexpr.hash.pairs;
+      if (node.hash) {
+        items = node.hash.pairs;
         for (i = 0, len = items.length; i < len; i++) {
-          result.push(items[i][0]);
-          this.stringParts(items[i][1], result);
+          result.push(items[i].key);
+          this.stringParts(items[i].value, result);
         }
       }
-    } else {
-      result.push(sexpr.original);
+    } else if (node.type !== 'BooleanLiteral') {
+      // handlebars 1.x BOOLEAN nodes had no `original`, so a boolean hash value
+      // never contributed to the inferred key; >= 4 BooleanLiteral has
+      // `original: true`, which would leak `_true` and orphan the existing
+      // translation. numbers/strings/paths did have an `original` in 1.x and
+      // must still contribute.
+      result.push(node.original);
     }
     return result;
   },
@@ -360,7 +336,7 @@ var PreProcessor = {
       , factory = (wrapper.match(TEMP_PLACEHOLDER) ? concatNode : stringNode)
       , i;
     for (i = 0; i < wrappersLen; i++) {
-      if (wrappers[i][1].string === wrapper)
+      if (wrappers[i][1].value === wrapper)
         return i;
     }
     wrappers.push(["w" + i, factory(wrapper, tempMap)]);
@@ -374,7 +350,7 @@ var PreProcessor = {
     while ((node = nodes.shift())) {
       if (node.nodeName === '#text' && node.nodeValue.trim()) {
         if (text) // there can be only one
-          throw new Errors.UnwrappableContentError(context.firstLine, "multiple text nodes in html markup");
+          throw new Errors.UnwrappableContentError(firstLineOf(context), "multiple text nodes in html markup");
         text = node.nodeValue;
       } else if (node.childNodes.length) {
         nodes = nodes.concat(slice.call(node.childNodes));

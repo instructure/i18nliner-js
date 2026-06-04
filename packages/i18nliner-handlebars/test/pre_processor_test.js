@@ -8,9 +8,13 @@ const PreProcessor = require("../lib/pre_processor");
 
 describe("PreProcessor", function() {
   before(function() {
-    var StringNode = Handlebars.AST.StringNode;
     this.inferKey = sinon.stub(PreProcessor, "inferKey").callsFake(function() {
-      return new StringNode("key");
+      return {
+        type: "StringLiteral",
+        value: "key",
+        original: "key",
+        loc: { start: { line: 1, column: 0 }, end: { line: 1, column: 0 } }
+      };
     });
   });
 
@@ -19,14 +23,27 @@ describe("PreProcessor", function() {
   });
 
   describe(".process", function() {
+    // handlebars >= 4 bakes source locations into precompiled output, so two
+    // equivalent templates at different source positions never compare equal.
+    // strip locations before precompiling so we compare structure, not columns.
+    function stripLoc(node) {
+      if (Array.isArray(node)) {
+        node.forEach(stripLoc);
+      } else if (node && typeof node === "object") {
+        delete node.loc;
+        Object.keys(node).forEach(function(key) { stripLoc(node[key]); });
+      }
+      return node;
+    }
+
     function p(source) {
       var ast = Handlebars.parse(source);
       PreProcessor.process(ast);
-      return Handlebars.precompile(ast);
+      return Handlebars.precompile(stripLoc(ast));
     }
 
     function c(source) {
-      return Handlebars.precompile(source);
+      return Handlebars.precompile(stripLoc(Handlebars.parse(source)));
     }
 
     it("transforms t block expressions", function() {
@@ -132,6 +149,19 @@ describe("PreProcessor", function() {
       );
     });
 
+    it("keeps numeric hash values but drops booleans in inferred placeholder keys", function() {
+      // handlebars 1.x: INTEGER nodes had an `original` (kept), BOOLEAN nodes
+      // did not (dropped). >= 4 gives both an `original`, so a boolean would
+      // leak `_true` into the key and orphan the existing translation; numbers
+      // must still contribute.
+      assert.equal(
+        p('{{#t}}' +
+          '  {{n count precision=2 percentage=true}} things' +
+          '{{/t}}'),
+        c('{{t "key" "%{n_count_precision_2_percentage} things" n_count_precision_2_percentage=(n count precision=2 percentage=true) i18n_inferred_key=true}}')
+      );
+    });
+
     it("concatenates inline paths in wrappers", function() {
       assert.equal(
         p('{{#t}}' +
@@ -218,5 +248,36 @@ describe("PreProcessor", function() {
         }, Errors.MultipleSubExpressionsError);
       });
     }
+  });
+
+  describe("precompiled output", function() {
+    // regression: synthesized nodes must carry a loc, otherwise the
+    // handlebars >= 4 compiler bakes an empty `"loc":` into helper-call
+    // output and produces invalid JS. don't strip loc here.
+    function compileAndRender(source, context) {
+      var ast = Handlebars.parse(source);
+      PreProcessor.process(ast);
+      var spec = Handlebars.precompile(ast);
+      var template = Handlebars.template(new Function("return (" + spec + ")")());
+      return template(context || {});
+    }
+
+    before(function() {
+      Handlebars.registerHelper("t", function(key, defaultValue) {
+        return new Handlebars.SafeString(typeof defaultValue === "string" ? defaultValue : key);
+      });
+    });
+
+    after(function() {
+      Handlebars.unregisterHelper("t");
+    });
+
+    it("precompiles a transformed block into valid, renderable JS", function() {
+      assert.equal(compileAndRender("{{#t}}Hello{{/t}}"), "Hello");
+    });
+
+    it("precompiles a transformed inline call into valid, renderable JS", function() {
+      assert.equal(compileAndRender('{{t "Hello"}}'), "Hello");
+    });
   });
 });

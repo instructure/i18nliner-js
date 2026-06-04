@@ -1,7 +1,7 @@
 {
   "name": "@instructure/i18nliner-handlebars",
   "description": "handlebars i18n made simple",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "license": "MIT",
   "private": false,
   "exports": {
@@ -9,7 +9,8 @@
     "./hbs_extractor": "./lib/extractor.js",
     "./hbs_processor": "./lib/hbs_processor.js",
     "./hbs_translate_call": "./lib/t_call.js",
-    "./hbs_pre_processor": "./lib/pre_processor.js"
+    "./hbs_pre_processor": "./lib/pre_processor.js",
+    "./ast_nodes": "./lib/ast_nodes.js"
   },
   "contributors": [
     "Jon Jensen",
@@ -26,7 +27,7 @@
     "@instructure/i18nliner-runtime": "^1",
     "chai": "^4.3.6",
     "eslint": "^8.17.0",
-    "handlebars": "^1.3.0",
+    "handlebars": "^4.7.8",
     "jsdom": "^19.0.0",
     "mocha": "^10.0.0",
     "sinon": "^14.0.0"
@@ -39,7 +40,7 @@
   "peerDependencies": {
     "@instructure/i18nliner": "^3.0.0",
     "@instructure/i18nliner-runtime": "^1",
-    "handlebars": "~1.3.0",
+    "handlebars": "^4.7.8",
     "jsdom": "^14, ^15, ^16, ^17, ^18, ^19"
   },
   "bugs": {
