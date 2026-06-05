@@ -2,7 +2,7 @@
   "name": "@instructure/i18nliner-canvas",
   "description": "i18nliner, canvas style",
   "main": "./lib/main",
-  "version": "1.3.0",
+  "version": "2.0.0",
   "license": "AGPL-3.0",
   "exports": {
     ".": "./lib/main.js",
@@ -12,11 +12,11 @@
   },
   "dependencies": {
     "@instructure/i18nliner": "^3.0.1",
-    "@instructure/i18nliner-handlebars": "^2.0.0",
+    "@instructure/i18nliner-handlebars": "^3.0.0",
     "@instructure/i18nliner-runtime": "^1",
     "ember-template-compiler": "1.8.0",
     "glob": "^7.0.3",
-    "handlebars": "1.3.0",
+    "handlebars": "^4.7.8",
     "minimist": "^1.1.0",
     "mkdirp": "^0.5.1"
   },

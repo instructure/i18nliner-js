@@ -43,11 +43,11 @@ class ScopedTranslationHashAndIndex extends TranslationHash {
       record = { key }
 
       if (meta.options.i18n_scope) {
-        record.scope = meta.options.i18n_scope.string
+        record.scope = meta.options.i18n_scope.value
       }
 
       if (meta.options.i18n_used_in) {
-        record.used_in = meta.options.i18n_used_in.string
+        record.used_in = meta.options.i18n_used_in.value
       }
     }
     else {

@@ -1,4 +1,5 @@
 const TCall = require("./t_call");
+const { pathString } = require("./ast_nodes");
 
 function Extractor(ast, options){
   options = options || {};
@@ -16,7 +17,7 @@ Extractor.prototype.buildTranslateCall = function(sexpr) {
 };
 
 Extractor.prototype.process = function(ast) {
-  var statements = ast.statements
+  var statements = ast.body
     , statementsLen = statements.length
     , i;
   for (i = 0; i < statementsLen; i++) {
@@ -26,15 +27,15 @@ Extractor.prototype.process = function(ast) {
 
 Extractor.prototype.processExpression = function(statement) {
   switch (statement.type) {
-    case 'block':
+    case 'BlockStatement':
       this.process(statement.program);
       if (statement.inverse)
         this.process(statement.inverse);
       break;
-    case 'mustache':
-      this.processSexpr(statement.sexpr);
+    case 'MustacheStatement':
+      this.processSexpr(statement);
       break;
-    case 'sexpr':
+    case 'SubExpression':
       this.processSexpr(statement);
       break;
   }
@@ -44,20 +45,17 @@ Extractor.prototype.processSexpr = function(sexpr) {
   var i
     , len
     , items;
-  if (sexpr.type === 'sexpr') {
-    this.processExpression(sexpr.id);
-    items = sexpr.params;
+  items = sexpr.params;
+  for (i = 0, len = items.length; i < len; i++) {
+    this.processExpression(items[i]);
+  }
+  if (sexpr.hash) {
+    items = sexpr.hash.pairs;
     for (i = 0, len = items.length; i < len; i++) {
-      this.processExpression(items[i]);
-    }
-    if (sexpr.hash) {
-      items = sexpr.hash.pairs;
-      for (i = 0, len = items.length; i < len; i++) {
-        this.processExpression(items[i][1]);
-      }
+      this.processExpression(items[i].value);
     }
   }
-  if (sexpr.id.string === this.helperKey) {
+  if (pathString(sexpr.path) === this.helperKey) {
     this.processTranslateCall(sexpr);
   }
 }

@@ -6,8 +6,8 @@ const {UNSUPPORTED_EXPRESSION} = require('@instructure/i18nliner/errors');
  * normalizes args/etc into literals that TranslateCall can deal with
  */
 function TCall(sexpr) {
-  var line = sexpr.firstLine
-    , method = sexpr.string
+  var line = sexpr.loc && sexpr.loc.start.line
+    , method = sexpr.path && sexpr.path.original
     , args = this.processArguments(sexpr);
 
   TranslateCall.call(this, line, method, args);
@@ -31,7 +31,7 @@ TCall.prototype.processArguments = function(sexpr) {
 };
 
 TCall.prototype.evaluateExpression = function(node) {
-  return  node.type === 'STRING' ? node.string : UNSUPPORTED_EXPRESSION;
+  return  node.type === 'StringLiteral' ? node.value : UNSUPPORTED_EXPRESSION;
 };
 
 TCall.prototype.processHash = function(pairs) {
@@ -41,11 +41,11 @@ TCall.prototype.processHash = function(pairs) {
     , len = pairs.length
     , i;
   for (i = 0; i < len; i++) {
-    if (this.constructor.META_KEYS.includes(pairs[i][0])) {
-      result[pairs[i][0]] = pairs[i][1]
+    if (this.constructor.META_KEYS.includes(pairs[i].key)) {
+      result[pairs[i].key] = pairs[i].value
     }
     else {
-      result[pairs[i][0]] = UNSUPPORTED_EXPRESSION;
+      result[pairs[i].key] = UNSUPPORTED_EXPRESSION;
     }
   }
   return result;

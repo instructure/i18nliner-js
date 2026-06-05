@@ -17,10 +17,7 @@
  */
 
 var PreProcessor = require("@instructure/i18nliner-handlebars/hbs_pre_processor");
-var Handlebars = require("handlebars");
-var AST = Handlebars.AST;
-var StringNode = AST.StringNode;
-var HashNode = AST.HashNode;
+var { pathString, stringNode, hashNode, hashPair } = require("@instructure/i18nliner-handlebars/ast_nodes");
 
 const ScopedHbsPreProcessor = {...PreProcessor}
 const KeyType = {
@@ -53,19 +50,15 @@ ScopedHbsPreProcessor.normalizeInterpolationKey = function(key) {
 // add explicit scope to all t calls (post block -> inline transformation)
 ScopedHbsPreProcessor.processStatement = function(statement) {
   statement = PreProcessor.processStatement.call(this, statement) || statement;
-  if (statement.type === 'mustache' && statement.id.string === 't')
+  if (statement.type === 'MustacheStatement' && pathString(statement.path) === 't')
     return this.injectScope(statement);
-  else if (statement.type === 'sexpr' && statement.id.string === 't')
+  else if (statement.type === 'SubExpression' && pathString(statement.path) === 't')
     return this.injectScope(statement);
 }
 
 ScopedHbsPreProcessor.injectScope = function(node) {
   if (!node.hash) {
-    node.hash = new HashNode([]);
-
-    if (node.sexpr) {
-      node.sexpr.hash = node.hash
-    }
+    node.hash = hashNode([]);
   }
 
   const { pairs } = node.hash;
@@ -73,17 +66,17 @@ ScopedHbsPreProcessor.injectScope = function(node) {
 
   switch (keyType) {
     case KeyType.RELATIVE:
-      node.params[0] = new StringNode(`${this.scope}.${node.params[0].string}`)
+      node.params[0] = stringNode(`${this.scope}.${node.params[0].value}`)
       node.hash.pairs = pairs.concat([
-        ["i18n_scope", new StringNode(this.scope)]
+        hashPair("i18n_scope", stringNode(this.scope))
       ]);
     break;
 
     case KeyType.ABSOLUTE:
-      node.params[0] = new StringNode(node.params[0].string.slice(1))
+      node.params[0] = stringNode(node.params[0].value.slice(1))
       node.hash.pairs = pairs.concat([
-        ["i18n_scope", new StringNode(node.params[0].string.split('.').slice(0, -1).join('.'))],
-        ["i18n_used_in", new StringNode(this.scope)],
+        hashPair("i18n_scope", stringNode(node.params[0].value.split('.').slice(0, -1).join('.'))),
+        hashPair("i18n_used_in", stringNode(this.scope)),
       ]);
     break;
 
@@ -91,7 +84,7 @@ ScopedHbsPreProcessor.injectScope = function(node) {
   // if inferred, it's always the last option
     case KeyType.INFERRED:
       node.hash.pairs = pairs.concat([
-        ["i18n_scope", new StringNode(this.scope)]
+        hashPair("i18n_scope", stringNode(this.scope))
       ]);
     break;
   }
@@ -104,23 +97,23 @@ function classifyKey(node) {
     node.hash &&
     node.hash.pairs &&
     node.hash.pairs.length > 0 &&
-    node.hash.pairs[node.hash.pairs.length - 1][0] === 'i18n_inferred_key'
+    node.hash.pairs[node.hash.pairs.length - 1].key === 'i18n_inferred_key'
   ) {
     return KeyType.INFERRED
   }
 
   else if (
     node.params[0] &&
-    node.params[0].type === 'STRING' &&
-    node.params[0].string.startsWith('#')
+    node.params[0].type === 'StringLiteral' &&
+    node.params[0].value.startsWith('#')
   ) {
     return KeyType.ABSOLUTE
   }
   else if (
     node.params[0] &&
-    node.params[0].type === 'STRING' &&
+    node.params[0].type === 'StringLiteral' &&
     node.params[1] &&
-    node.params[1].type === 'STRING'
+    node.params[1].type === 'StringLiteral'
   ) {
     return KeyType.RELATIVE
   }
